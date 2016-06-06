@@ -1,0 +1,1 @@
+Disable SMSReceiver when no tournament is in progress

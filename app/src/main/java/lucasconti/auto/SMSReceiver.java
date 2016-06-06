@@ -25,9 +25,13 @@ public class SMSReceiver extends BroadcastReceiver {
                 for (int i = 0; i < pdus.length; i++) {
                     // Deprecated in only API 23
                     messages[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
-                    Log.i(TAG, messages[i].getMessageBody());
                 }
+                sendSMS(Integer.parseInt(messages[0].getOriginatingAddress()));
             }
         }
+    }
+
+    private void sendSMS(int target) {
+
     }
 }

@@ -11,13 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
 
     private static final String TAG = "MainActivityFragment" ;
-    private static final int REQUEST_RECEIVE_SMS = 50;
+    private static final int REQUEST_SMS = 50;
 
     public MainActivityFragment() {
     }
@@ -25,18 +28,23 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        askPermission();
+        String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
+        askPermissions(permissions);
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
-    private void askPermission() {
+    private void askPermissions(String[] permissions) {
         if (Build.VERSION.SDK_INT >= 23) {
-            int permissionCheck = getContext().checkSelfPermission(
-                    Manifest.permission.RECEIVE_SMS);
-            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{Manifest.permission.RECEIVE_SMS},
-                        REQUEST_RECEIVE_SMS);
+            ArrayList<String> permissionsNeeded = new ArrayList<String>();
+            for (int i = 0; i < permissions.length; i++) {
+                int permissionCheck = getContext().checkSelfPermission(permissions[i]);
+                if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                    permissionsNeeded.add(permissions[i]);
+                }
             }
+            String[] permissionsToAsk = Arrays.copyOf(permissionsNeeded.toArray(),
+                    permissionsNeeded.size(), String[].class);
+            requestPermissions(permissionsToAsk, REQUEST_SMS);
         }
     }
 }
