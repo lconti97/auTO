@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -26,12 +27,13 @@ public class SMSReceiver extends BroadcastReceiver {
                     // Deprecated in only API 23
                     messages[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
                 }
-                sendSMS(Integer.parseInt(messages[0].getOriginatingAddress()));
+                sendSMS(messages[0].getOriginatingAddress());
             }
         }
     }
 
-    private void sendSMS(int target) {
-
+    private void sendSMS(String target) {
+        SmsManager manager = SmsManager.getDefault();
+        manager.sendTextMessage(target, null, "test", null, null);
     }
 }
