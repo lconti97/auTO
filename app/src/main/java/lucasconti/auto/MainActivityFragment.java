@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.Context;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,8 @@ public class MainActivityFragment extends Fragment {
 
     private static final String TAG = "MainActivityFragment" ;
     private static final int REQUEST_SMS = 50;
+    private Button mButton;
+    private ChallongeManager manager;
 
     public MainActivityFragment() {
     }
@@ -28,9 +31,10 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_main, container, false);
         String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
         askPermissions(permissions);
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return v;
     }
 
     private void askPermissions(String[] permissions) {
@@ -42,9 +46,11 @@ public class MainActivityFragment extends Fragment {
                     permissionsNeeded.add(permissions[i]);
                 }
             }
-            String[] permissionsToAsk = Arrays.copyOf(permissionsNeeded.toArray(),
-                    permissionsNeeded.size(), String[].class);
-            requestPermissions(permissionsToAsk, REQUEST_SMS);
+            if (permissionsNeeded.size() != 0) {
+                String[] permissionsToAsk = Arrays.copyOf(permissionsNeeded.toArray(),
+                        permissionsNeeded.size(), String[].class);
+                requestPermissions(permissionsToAsk, REQUEST_SMS);
+            }
         }
     }
 }
