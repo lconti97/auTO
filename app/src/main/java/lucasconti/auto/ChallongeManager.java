@@ -23,7 +23,7 @@ public class ChallongeManager {
     private Context context;
     private String username = "lconti97";
     private String apiKey = "4FL28vfZR3xRZSJToJnXUDUgD4iXDQDiUziLVSEl";
-    RequestQueue queue;
+    private RequestQueue queue;
 
     public ChallongeManager(Context context) {
         this.context = context;

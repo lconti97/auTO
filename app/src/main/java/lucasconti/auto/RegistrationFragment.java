@@ -18,14 +18,14 @@ import java.util.Arrays;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class RegistrationFragment extends Fragment {
 
-    private static final String TAG = "MainActivityFragment" ;
+    private static final String TAG = "RegistrationFragment" ;
     private static final int REQUEST_SMS = 50;
     private Button mButton;
     private ChallongeManager manager;
 
-    public MainActivityFragment() {
+    public RegistrationFragment() {
     }
 
     @Override
