@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.content.Context;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +23,7 @@ public class RegistrationFragment extends Fragment {
 
     private static final String TAG = "RegistrationFragment" ;
     private static final int REQUEST_SMS = 50;
-    private Button mButton;
     private ChallongeManager manager;
-
-    public RegistrationFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
