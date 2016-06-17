@@ -46,4 +46,8 @@ public class RegistrationFragment extends Fragment {
             }
         }
     }
+
+    public void addParticipant() {
+
+    }
 }
