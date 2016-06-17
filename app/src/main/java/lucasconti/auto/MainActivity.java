@@ -31,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChallongeManager manager = new ChallongeManager(getApplicationContext());
-                manager.test();
+                fm.beginTransaction().replace(R.id.content, new CurrentTournamentFragment())
+                        .commit();
+//                ChallongeManager manager = new ChallongeManager(getApplicationContext());
+//                manager.test();
             }
         });
     }
