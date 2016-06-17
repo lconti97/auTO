@@ -14,7 +14,6 @@
         android:text="Hello World!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:paddingTop="60dp"/>
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>
