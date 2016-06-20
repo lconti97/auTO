@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +22,8 @@ public class RegistrationFragment extends Fragment {
     private static final String TAG = "RegistrationFragment" ;
     private static final int REQUEST_SMS = 50;
     private ChallongeManager manager;
+    private ListView participantsList;
+    private ArrayAdapter<String> participantsAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,6 +31,11 @@ public class RegistrationFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_registration, container, false);
         String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
         askPermissions(permissions);
+        participantsList = (ListView) v.findViewById(R.id.participants_list);
+        participantsAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, new String[]{"Kirodin", "Zain", "Hbox"});
+        participantsList.setAdapter(participantsAdapter);
+
         return v;
     }
 
