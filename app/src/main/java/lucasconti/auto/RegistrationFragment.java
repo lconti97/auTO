@@ -3,14 +3,13 @@ package lucasconti.auto;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -21,13 +20,16 @@ import java.util.Arrays;
  * A placeholder fragment containing a simple view.
  */
 public class RegistrationFragment extends Fragment
-        implements AddPtcpDialogFrag.AddPtcpDialogListener {
+        implements AddEditPtcpDialogFrag.AddPtcpDialogListener {
 
     private static final String TAG = "RegistrationFragment" ;
     private static final int REQUEST_SMS = 50;
+    public static final String TAG_NAME = "name";
+    public static final String TAG_NUMBER = "number";
+
     private ChallongeManager manager;
-    private ListView participantsList;
-    private ArrayAdapter<Ptcp> participantsAdapter;
+    private ListView ptcpsList;
+    private ArrayAdapter<Ptcp> ptcpsAdapter;
     private FragmentManager fm;
     private ArrayList<Ptcp> mPtcps;
 
@@ -41,10 +43,22 @@ public class RegistrationFragment extends Fragment
         mPtcps.add(new Ptcp("Kirodin", "17164720456"));
         mPtcps.add(new Ptcp("Zain", "17164728811"));
         mPtcps.add(new Ptcp("Hbox", "17164728005"));
-        participantsList = (ListView) v.findViewById(R.id.participants_list);
-        participantsAdapter = new ArrayAdapter<>(getActivity(),
+        ptcpsList = (ListView) v.findViewById(R.id.ptcps_list);
+        ptcpsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Ptcp ptcp = (Ptcp)parent.getItemAtPosition(position);
+                AddEditPtcpDialogFrag frag = new AddEditPtcpDialogFrag();
+                Bundle b = new Bundle();
+                b.putString(TAG_NAME, ptcp.getName());
+                b.putString(TAG_NUMBER, ptcp.getPhoneNumber());
+                frag.setArguments(b);
+                frag.show(fm, "AddEditPtcpDialogFrag");
+            }
+        });
+        ptcpsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mPtcps);
-        participantsList.setAdapter(participantsAdapter);
+        ptcpsList.setAdapter(ptcpsAdapter);
 
         fm = getChildFragmentManager();
 
@@ -69,14 +83,14 @@ public class RegistrationFragment extends Fragment
     }
 
     public void addParticipant() {
-        AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
-        dialog.show(fm, "AddPtcpDialogFrag");
+        AddEditPtcpDialogFrag dialog = new AddEditPtcpDialogFrag();
+        dialog.show(fm, "AddEditPtcpDialogFrag");
     }
 
     @Override
     public void onAddPtcpDialogPositiveClick(String name, String phoneNumber) {
         mPtcps.add(new Ptcp(name, phoneNumber));
-        participantsAdapter.notifyDataSetChanged();
+        ptcpsAdapter.notifyDataSetChanged();
     }
 
 }

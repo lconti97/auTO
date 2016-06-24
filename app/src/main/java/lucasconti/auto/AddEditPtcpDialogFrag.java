@@ -13,7 +13,7 @@ import android.widget.EditText;
 /**
  * Created by Lucas on 6/23/2016.
  */
-public class AddPtcpDialogFrag extends DialogFragment {
+public class AddEditPtcpDialogFrag extends DialogFragment {
 
     private EditText mNameText;
     private EditText mPhoneText;
@@ -22,7 +22,7 @@ public class AddPtcpDialogFrag extends DialogFragment {
     }
     private AddPtcpDialogListener mListener;
 
-    public AddPtcpDialogFrag() {
+    public AddEditPtcpDialogFrag() {
 
     }
 
@@ -46,6 +46,11 @@ public class AddPtcpDialogFrag extends DialogFragment {
         View v = inflater.inflate(R.layout.dialog_add_edit_ptcp, null, false);
         mNameText = (EditText) v.findViewById(R.id.dialog_name_edit_text);
         mPhoneText = (EditText) v.findViewById(R.id.dialog_phone_edit_text);
+        Bundle b = getArguments();
+        if (b != null) {
+            mNameText.setText(b.getString(RegistrationFragment.TAG_NAME, ""));
+            mPhoneText.setText(b.getString(RegistrationFragment.TAG_NUMBER, ""));
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Add participant")
                 .setView(v)
