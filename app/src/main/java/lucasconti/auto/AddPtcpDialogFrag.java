@@ -42,13 +42,16 @@ public class AddPtcpDialogFrag extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity())
+        LayoutInflater inflater = getParentFragment().getLayoutInflater(savedInstanceState);
+        View v = inflater.inflate(R.layout.dialog_add_ptcp, null, false);
+        mNameText = (EditText) v.findViewById(R.id.add_ptcp);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Add participant")
-                .setView(R.layout.dialog_add_ptcp)
+                .setView(v)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.onAddPtcpDialogPositiveClick("BLIP");
+                        mListener.onAddPtcpDialogPositiveClick(mNameText.getText().toString());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -56,7 +59,7 @@ public class AddPtcpDialogFrag extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                })
-                .create();
+                });
+                return builder.create();
     }
 }
