@@ -29,6 +29,7 @@ public class RegistrationFragment extends Fragment
     private ListView participantsList;
     private ArrayAdapter<String> participantsAdapter;
     private FragmentManager fm;
+    private ArrayList<String> mPtcps;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,9 +37,13 @@ public class RegistrationFragment extends Fragment
         View v = inflater.inflate(R.layout.fragment_registration, container, false);
         String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
         askPermissions(permissions);
+        mPtcps = new ArrayList<String>();
+        mPtcps.add("Kirodin");
+        mPtcps.add("Zain");
+        mPtcps.add("Hbox");
         participantsList = (ListView) v.findViewById(R.id.participants_list);
         participantsAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, new String[]{"Kirodin", "Zain", "Hbox"});
+                android.R.layout.simple_list_item_1, mPtcps);
         participantsList.setAdapter(participantsAdapter);
 
         fm = getChildFragmentManager();
@@ -70,7 +75,8 @@ public class RegistrationFragment extends Fragment
 
     @Override
     public void onAddPtcpDialogPositiveClick(String name) {
-        Log.i("t", name);
+        mPtcps.add(name);
+        participantsAdapter.notifyDataSetChanged();
     }
 
 }
