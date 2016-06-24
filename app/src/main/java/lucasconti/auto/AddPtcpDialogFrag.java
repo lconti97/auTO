@@ -8,7 +8,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
 /**
@@ -17,8 +16,9 @@ import android.widget.EditText;
 public class AddPtcpDialogFrag extends DialogFragment {
 
     private EditText mNameText;
+    private EditText mPhoneText;
     public interface AddPtcpDialogListener {
-        public void onAddPtcpDialogPositiveClick(String name);
+        public void onAddPtcpDialogPositiveClick(String name, String phoneNumber);
     }
     private AddPtcpDialogListener mListener;
 
@@ -43,15 +43,17 @@ public class AddPtcpDialogFrag extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getParentFragment().getLayoutInflater(savedInstanceState);
-        View v = inflater.inflate(R.layout.dialog_add_ptcp, null, false);
-        mNameText = (EditText) v.findViewById(R.id.add_ptcp);
+        View v = inflater.inflate(R.layout.dialog_add_edit_ptcp, null, false);
+        mNameText = (EditText) v.findViewById(R.id.dialog_name_edit_text);
+        mPhoneText = (EditText) v.findViewById(R.id.dialog_phone_edit_text);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Add participant")
                 .setView(v)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.onAddPtcpDialogPositiveClick(mNameText.getText().toString());
+                        mListener.onAddPtcpDialogPositiveClick(
+                                mNameText.getText().toString(), mPhoneText.getText().toString());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

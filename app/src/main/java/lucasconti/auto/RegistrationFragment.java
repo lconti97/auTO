@@ -27,9 +27,9 @@ public class RegistrationFragment extends Fragment
     private static final int REQUEST_SMS = 50;
     private ChallongeManager manager;
     private ListView participantsList;
-    private ArrayAdapter<String> participantsAdapter;
+    private ArrayAdapter<Ptcp> participantsAdapter;
     private FragmentManager fm;
-    private ArrayList<String> mPtcps;
+    private ArrayList<Ptcp> mPtcps;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,12 +37,12 @@ public class RegistrationFragment extends Fragment
         View v = inflater.inflate(R.layout.fragment_registration, container, false);
         String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
         askPermissions(permissions);
-        mPtcps = new ArrayList<String>();
-        mPtcps.add("Kirodin");
-        mPtcps.add("Zain");
-        mPtcps.add("Hbox");
+        mPtcps = new ArrayList<>();
+        mPtcps.add(new Ptcp("Kirodin", "17164720456"));
+        mPtcps.add(new Ptcp("Zain", "17164728811"));
+        mPtcps.add(new Ptcp("Hbox", "17164728005"));
         participantsList = (ListView) v.findViewById(R.id.participants_list);
-        participantsAdapter = new ArrayAdapter<String>(getActivity(),
+        participantsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mPtcps);
         participantsList.setAdapter(participantsAdapter);
 
@@ -53,7 +53,7 @@ public class RegistrationFragment extends Fragment
 
     private void askPermissions(String[] permissions) {
         if (Build.VERSION.SDK_INT >= 23) {
-            ArrayList<String> permissionsNeeded = new ArrayList<String>();
+            ArrayList<String> permissionsNeeded = new ArrayList<>();
             for (int i = 0; i < permissions.length; i++) {
                 int permissionCheck = getContext().checkSelfPermission(permissions[i]);
                 if (permissionCheck == PackageManager.PERMISSION_DENIED) {
@@ -74,8 +74,8 @@ public class RegistrationFragment extends Fragment
     }
 
     @Override
-    public void onAddPtcpDialogPositiveClick(String name) {
-        mPtcps.add(name);
+    public void onAddPtcpDialogPositiveClick(String name, String phoneNumber) {
+        mPtcps.add(new Ptcp(name, phoneNumber));
         participantsAdapter.notifyDataSetChanged();
     }
 

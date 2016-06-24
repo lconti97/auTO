@@ -7,8 +7,17 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/add_ptcp"
+        android:id="@+id/dialog_name_edit_text"
         android:hint="Name"
-        android:padding="24dp"/>
+        android:padding="24dp"
+        android:inputType="textCapSentences"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_phone_edit_text"
+        android:hint="Phone Number"
+        android:padding="24dp"
+        android:inputType="phone"/>
 
 </LinearLayout>
