@@ -1,1 +1,2 @@
 Disable SMSReceiver when no tournament is in progress
+Focus on AddPtcpDialogFrag's EditText as soon as it shows

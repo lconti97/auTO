@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class RegistrationFragment extends Fragment {
     private ChallongeManager manager;
     private ListView participantsList;
     private ArrayAdapter<String> participantsAdapter;
+    private FragmentManager fm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,6 +37,8 @@ public class RegistrationFragment extends Fragment {
         participantsAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, new String[]{"Kirodin", "Zain", "Hbox"});
         participantsList.setAdapter(participantsAdapter);
+
+        fm = getActivity().getSupportFragmentManager();
 
         return v;
     }
@@ -57,6 +61,7 @@ public class RegistrationFragment extends Fragment {
     }
 
     public void addParticipant() {
-
+        AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
+        dialog.show(fm, "AddPtcpDialogFrag");
     }
 }
