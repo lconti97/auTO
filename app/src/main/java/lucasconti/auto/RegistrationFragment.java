@@ -3,9 +3,11 @@ package lucasconti.auto;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,8 @@ import java.util.Arrays;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RegistrationFragment extends Fragment {
+public class RegistrationFragment extends Fragment
+        implements AddPtcpDialogFrag.AddPtcpDialogListener {
 
     private static final String TAG = "RegistrationFragment" ;
     private static final int REQUEST_SMS = 50;
@@ -38,7 +41,7 @@ public class RegistrationFragment extends Fragment {
                 android.R.layout.simple_list_item_1, new String[]{"Kirodin", "Zain", "Hbox"});
         participantsList.setAdapter(participantsAdapter);
 
-        fm = getActivity().getSupportFragmentManager();
+        fm = getChildFragmentManager();
 
         return v;
     }
@@ -64,4 +67,10 @@ public class RegistrationFragment extends Fragment {
         AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
         dialog.show(fm, "AddPtcpDialogFrag");
     }
+
+    @Override
+    public void onAddPtcpDialogPositiveClick(String name) {
+        Log.i("t", name);
+    }
+
 }

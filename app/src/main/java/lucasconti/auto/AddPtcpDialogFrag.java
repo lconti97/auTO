@@ -1,5 +1,6 @@
 package lucasconti.auto;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,9 +17,27 @@ import android.widget.EditText;
 public class AddPtcpDialogFrag extends DialogFragment {
 
     private EditText mNameText;
+    public interface AddPtcpDialogListener {
+        public void onAddPtcpDialogPositiveClick(String name);
+    }
+    private AddPtcpDialogListener mListener;
 
     public AddPtcpDialogFrag() {
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            mListener = (AddPtcpDialogListener) getParentFragment();
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(activity.toString()
+                    + " must implement NoticeDialogListener");
+        }
     }
 
     @Override
@@ -29,7 +48,7 @@ public class AddPtcpDialogFrag extends DialogFragment {
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        mListener.onAddPtcpDialogPositiveClick("BLIP");
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
