@@ -11,18 +11,18 @@ import android.view.View;
 import android.widget.EditText;
 
 /**
- * Created by Lucas on 6/23/2016.
+ * Created by Lucas on 6/26/2016.
  */
-public class AddEditPtcpDialogFrag extends DialogFragment {
+public class EditPtcpDialogFrag extends DialogFragment {
 
     private EditText mNameText;
     private EditText mPhoneText;
-    public interface AddPtcpDialogListener {
-        public void onAddPtcpDialogPositiveClick(String name, String phoneNumber);
+    public interface EditPtcpDialogListener {
+        public void onEditPtcpDialogPositiveClick(String name, String phoneNumber);
     }
-    private AddPtcpDialogListener mListener;
+    private EditPtcpDialogListener mListener;
 
-    public AddEditPtcpDialogFrag() {
+    public EditPtcpDialogFrag() {
 
     }
 
@@ -32,7 +32,7 @@ public class AddEditPtcpDialogFrag extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (AddPtcpDialogListener) getParentFragment();
+            mListener = (EditPtcpDialogListener) getParentFragment();
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(activity.toString()
@@ -52,21 +52,33 @@ public class AddEditPtcpDialogFrag extends DialogFragment {
             mPhoneText.setText(b.getString(RegistrationFragment.TAG_NUMBER, ""));
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle("Add participant")
+                .setTitle("Edit participant")
                 .setView(v)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.onAddPtcpDialogPositiveClick(
+                        mListener.onEditPtcpDialogPositiveClick(
                                 mNameText.getText().toString(), mPhoneText.getText().toString());
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
+                })
+                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+
+                    }
                 });
-                return builder.create();
+        return builder.create();
     }
 }

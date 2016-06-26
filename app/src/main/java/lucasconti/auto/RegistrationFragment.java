@@ -20,7 +20,8 @@ import java.util.Arrays;
  * A placeholder fragment containing a simple view.
  */
 public class RegistrationFragment extends Fragment
-        implements AddEditPtcpDialogFrag.AddPtcpDialogListener {
+        implements AddPtcpDialogFrag.AddPtcpDialogListener,
+        EditPtcpDialogFrag.EditPtcpDialogListener {
 
     private static final String TAG = "RegistrationFragment" ;
     private static final int REQUEST_SMS = 50;
@@ -32,6 +33,7 @@ public class RegistrationFragment extends Fragment
     private ArrayAdapter<Ptcp> ptcpsAdapter;
     private FragmentManager fm;
     private ArrayList<Ptcp> mPtcps;
+    private Ptcp mCurrPtcp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,13 +49,13 @@ public class RegistrationFragment extends Fragment
         ptcpsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Ptcp ptcp = (Ptcp)parent.getItemAtPosition(position);
-                AddEditPtcpDialogFrag frag = new AddEditPtcpDialogFrag();
+                mCurrPtcp = (Ptcp)parent.getItemAtPosition(position);
+                EditPtcpDialogFrag frag = new EditPtcpDialogFrag();
                 Bundle b = new Bundle();
-                b.putString(TAG_NAME, ptcp.getName());
-                b.putString(TAG_NUMBER, ptcp.getPhoneNumber());
+                b.putString(TAG_NAME, mCurrPtcp.getName());
+                b.putString(TAG_NUMBER, mCurrPtcp.getPhoneNumber());
                 frag.setArguments(b);
-                frag.show(fm, "AddEditPtcpDialogFrag");
+                frag.show(fm, "EditPtcpDialogFrag");
             }
         });
         ptcpsAdapter = new ArrayAdapter<>(getActivity(),
@@ -83,13 +85,20 @@ public class RegistrationFragment extends Fragment
     }
 
     public void addParticipant() {
-        AddEditPtcpDialogFrag dialog = new AddEditPtcpDialogFrag();
-        dialog.show(fm, "AddEditPtcpDialogFrag");
+        AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
+        dialog.show(fm, "AddPtcpDialogFrag");
     }
 
     @Override
     public void onAddPtcpDialogPositiveClick(String name, String phoneNumber) {
         mPtcps.add(new Ptcp(name, phoneNumber));
+        ptcpsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onEditPtcpDialogPositiveClick(String name, String phoneNumber) {
+        mCurrPtcp.setName(name);
+        mCurrPtcp.setPhoneNumber(phoneNumber);
         ptcpsAdapter.notifyDataSetChanged();
     }
 
