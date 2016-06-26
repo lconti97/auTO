@@ -102,4 +102,10 @@ public class RegistrationFragment extends Fragment
         ptcpsAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onEditPtcpDialogNegativeClick() {
+        mPtcps.remove(mCurrPtcp);
+        ptcpsAdapter.notifyDataSetChanged();
+    }
+
 }
