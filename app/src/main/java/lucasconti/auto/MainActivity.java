@@ -15,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
     private RegistrationFrag registrationFrag;
     private RunTnmtFrag runTnmtFrag;
     private TnmtListFrag tnmtListFrag;
+    public interface FabListener {
+        public void onFabClick();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tnmtListFrag.onFabClick();
 //                regFrag.addParticipant();
 //                fm.beginTransaction().replace(R.id.content, new RunTnmtFrag())
 //                        .commit();

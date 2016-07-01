@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 /**
  * Created by Lucas on 6/17/2016.
  */
-public class RunTnmtFrag extends Fragment {
+public class RunTnmtFrag extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
