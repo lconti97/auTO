@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fm;
     private static final String TAG = "MainActivity";
+    private RegistrationFragment regFrag;
+    private CurrentTournamentFragment currTorFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +26,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fm = getSupportFragmentManager();
-        fm.beginTransaction().add(R.id.content, new RegistrationFragment())
-                .commit();
+        regFrag = new RegistrationFragment();
+        fm.beginTransaction().add(R.id.content, regFrag).commit();
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fm.beginTransaction().replace(R.id.content, new CurrentTournamentFragment())
-                        .commit();
+                regFrag.addParticipant();
+//                fm.beginTransaction().replace(R.id.content, new CurrentTournamentFragment())
+//                        .commit();
 //                ChallongeManager manager = new ChallongeManager(getApplicationContext());
 //                manager.test();
             }
