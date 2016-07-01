@@ -19,11 +19,11 @@ import java.util.Arrays;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RegistrationFragment extends Fragment
+public class RegistrationFrag extends Fragment
         implements AddPtcpDialogFrag.AddPtcpDialogListener,
         EditPtcpDialogFrag.EditPtcpDialogListener {
 
-    private static final String TAG = "RegistrationFragment" ;
+    private static final String TAG = "RegistrationFrag" ;
     private static final int REQUEST_SMS = 50;
     public static final String TAG_NAME = "name";
     public static final String TAG_NUMBER = "number";
@@ -38,7 +38,7 @@ public class RegistrationFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_registration, container, false);
+        View v = inflater.inflate(R.layout.frag_registration, container, false);
         String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
         askPermissions(permissions);
         mPtcps = new ArrayList<>();

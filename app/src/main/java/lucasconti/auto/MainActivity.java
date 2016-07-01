@@ -2,21 +2,19 @@ package lucasconti.auto;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fm;
     private static final String TAG = "MainActivity";
-    private RegistrationFragment regFrag;
-    private CurrentTournamentFragment currTorFrag;
+    private RegistrationFrag registrationFrag;
+    private RunTnmtFrag runTnmtFrag;
+    private TnmtListFrag tnmtListFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +24,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fm = getSupportFragmentManager();
-        regFrag = new RegistrationFragment();
-        fm.beginTransaction().add(R.id.content, regFrag).commit();
+        tnmtListFrag = new TnmtListFrag();
+        fm.beginTransaction().add(R.id.content, tnmtListFrag).commit();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                regFrag.addParticipant();
-//                fm.beginTransaction().replace(R.id.content, new CurrentTournamentFragment())
+//                regFrag.addParticipant();
+//                fm.beginTransaction().replace(R.id.content, new RunTnmtFrag())
 //                        .commit();
 //                ChallongeManager manager = new ChallongeManager(getApplicationContext());
 //                manager.test();
