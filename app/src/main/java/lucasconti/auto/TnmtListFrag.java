@@ -23,6 +23,7 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
     private ListView tnmtsList;
     private ArrayAdapter<String> tnmtsListAdapter;
     private FragmentManager fm;
+    private ChallongeManager mManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +35,7 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
                 android.R.layout.simple_list_item_1, tnmts);
         tnmtsList.setAdapter(tnmtsListAdapter);
         fm = getChildFragmentManager();
+        mManager = ChallongeManager.get(getActivity());
         return v;
     }
 
@@ -48,5 +50,6 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
     public void onPositiveClick(String name) {
         tnmts.add(name);
         tnmtsListAdapter.notifyDataSetChanged();
+        mManager.addTnmt(name);
     }
 }
