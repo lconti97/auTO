@@ -64,6 +64,17 @@ public class ChallongeManager {
         queue.add(testRequest);
     }
 
+    public void getTnmts(Response.Listener<JSONArray> listener) {
+        String url = BASE_URL + "tournaments.json?api_key=" + apiKey;
+        JsonArrayRequest request = new JsonArrayRequest(url, listener, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                logError(error);
+            }
+        });
+        queue.add(request);
+    }
+
     public void addTnmt(final String name) {
         String url = BASE_URL + "tournaments.json?api_key=" + apiKey;
         StringRequest request = new StringRequest(Request.Method.POST, url,
@@ -76,16 +87,7 @@ public class ChallongeManager {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String json = null;
-                        NetworkResponse response = error.networkResponse;
-                        if (response != null && response.data != null) {
-                            switch (response.statusCode) {
-                                case 422:
-                                    json = new String(response.data);
-                                    Log.i("t", json);
-                                    break;
-                            }
-                        }
+                        logError(error);
                     }
                 }) {
             @Override
@@ -97,6 +99,19 @@ public class ChallongeManager {
             }
         };
         queue.add(request);
+    }
+
+    private void logError(VolleyError error) {
+        String json = null;
+        NetworkResponse response = error.networkResponse;
+        if (response != null && response.data != null) {
+            switch (response.statusCode) {
+                case 422:
+                    json = new String(response.data);
+                    Log.i("t", json);
+                    break;
+            }
+        }
     }
 
 }
