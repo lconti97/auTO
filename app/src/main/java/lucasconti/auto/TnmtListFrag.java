@@ -3,10 +3,10 @@ package lucasconti.auto;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Lucas on 7/1/2016.
@@ -27,7 +26,7 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
     private ArrayList<Tnmt> tnmtsList;
     private ListView tnmtsListView;
     private ArrayAdapter<Tnmt> tnmtsListAdapter;
-    private FragmentManager fm;
+    private FragmentManager childFm;
     private ChallongeManager mManager;
 
     @Override
@@ -39,7 +38,7 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
         tnmtsListAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, tnmtsList);
         tnmtsListView.setAdapter(tnmtsListAdapter);
-        fm = getChildFragmentManager();
+        childFm = getChildFragmentManager();
         mManager = ChallongeManager.get(getActivity());
         mManager.getTnmts(new Response.Listener<JSONArray>() {
             @Override
@@ -61,6 +60,14 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
                 tnmtsListAdapter.notifyDataSetChanged();
             }
         });
+        tnmtsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RegistrationFrag frag = new RegistrationFrag();
+                FragmentManager fm = getFragmentManager();
+                fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag).commit();
+            }
+        });
         return v;
     }
 
@@ -68,7 +75,7 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
     public void onFabClick() {
         //  Create a new tournament
         AddTnmtDialogFrag frag = new AddTnmtDialogFrag();
-        frag.show(fm, "AddTnmtDialogFrag");
+        frag.show(childFm, "AddTnmtDialogFrag");
     }
 
     @Override

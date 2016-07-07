@@ -101,6 +101,17 @@ public class ChallongeManager {
         queue.add(request);
     }
 
+    public void getPtcps(String tnmtUrl, Response.Listener<JSONArray> listener) {
+        String url = BASE_URL + "tournaments/" + tnmtUrl + "/participants.json?api_key=" + apiKey;
+        JsonArrayRequest request = new JsonArrayRequest(url, listener, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                logError(error);
+            }
+        });
+        queue.add(request);
+    }
+
     private void logError(VolleyError error) {
         String json = null;
         NetworkResponse response = error.networkResponse;
