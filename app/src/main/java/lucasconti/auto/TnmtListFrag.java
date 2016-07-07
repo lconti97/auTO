@@ -24,9 +24,9 @@ import java.util.Arrays;
  */
 public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
         AddTnmtDialogFrag.AddTnmtDialogListener {
-    private ArrayList<String> tnmtsList;
+    private ArrayList<Tnmt> tnmtsList;
     private ListView tnmtsListView;
-    private ArrayAdapter<String> tnmtsListAdapter;
+    private ArrayAdapter<Tnmt> tnmtsListAdapter;
     private FragmentManager fm;
     private ChallongeManager mManager;
 
@@ -44,12 +44,16 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
         mManager.getTnmts(new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                for (int i = 0; i < response.length(); i++) {
+                for (int i = response.length() - 1; i >= 0; i--) {
                     try {
                         //  The response is an array containing an object that contains our object
                         JSONObject intermediateJSON = (JSONObject) response.get(i);
                         JSONObject tnmtJSON = (JSONObject) intermediateJSON.get("tournament");
-                        tnmtsList.add((String)tnmtJSON.get("name"));
+                        String name = tnmtJSON.getString("name");
+                        int id = Integer.parseInt(tnmtJSON.getString("id"));
+                        String startedString = tnmtJSON.getString("started_at");
+                        boolean started = !startedString.equals("null");
+                        tnmtsList.add(new Tnmt(name, id, started));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -69,8 +73,8 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
 
     @Override
     public void onPositiveClick(String name) {
-        tnmtsList.add(name);
-        tnmtsListAdapter.notifyDataSetChanged();
-        mManager.addTnmt(name);
+//        tnmtsList.add(new Tnmt(name, ));
+//        tnmtsListAdapter.notifyDataSetChanged();
+//        mManager.addTnmt(name);
     }
 }
