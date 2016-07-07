@@ -64,6 +64,9 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RegistrationFrag frag = new RegistrationFrag();
+                Bundle b = new Bundle();
+                b.putString(RegistrationFrag.TAG_TNMT_URL, tnmtsList.get(position).getId() + "");
+                frag.setArguments(b);
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag).commit();
             }

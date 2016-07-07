@@ -32,6 +32,7 @@ public class RegistrationFrag extends Fragment
     private static final int REQUEST_SMS = 50;
     public static final String TAG_NAME = "name";
     public static final String TAG_NUMBER = "number";
+    public static final String TAG_TNMT_URL = "tnmtUrl";
 
     private ChallongeManager mManager;
     private ListView ptcpsList;
@@ -49,7 +50,8 @@ public class RegistrationFrag extends Fragment
         fm = getChildFragmentManager();
         mManager = ChallongeManager.get(getActivity());
         mPtcps = new ArrayList<>();
-        mManager.getPtcps("v2e83dfv", new Response.Listener<JSONArray>() {
+        String id = getArguments().getString(TAG_TNMT_URL);
+        mManager.getPtcps(id, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {

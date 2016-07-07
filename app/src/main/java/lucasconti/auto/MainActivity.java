@@ -27,8 +27,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fm = getSupportFragmentManager();
-        tnmtListFrag = new TnmtListFrag();
-        fm.beginTransaction().add(R.id.content, tnmtListFrag).commit();
+        //  Stop the fragment from being created multiple times
+        if (savedInstanceState == null) {
+            tnmtListFrag = new TnmtListFrag();
+            fm.beginTransaction().add(R.id.content, tnmtListFrag).commit();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
