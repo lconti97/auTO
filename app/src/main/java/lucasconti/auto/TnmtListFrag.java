@@ -1,8 +1,11 @@
 package lucasconti.auto;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +74,23 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
                 fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag).commit();
             }
         });
+        tnmtsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog dialog = new AlertDialog.Builder(getActivity()).setItems(
+                        new String[] {"Delete"},
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mManager.deleteTnmt(tnmtsList.get(position));
+                                tnmtsList.remove(position);
+                                tnmtsListAdapter.notifyDataSetChanged();
+                            }
+                        }).create();
+                dialog.show();
+                return true;
+            }
+        });
         return v;
     }
 
@@ -83,8 +103,9 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
 
     @Override
     public void onPositiveClick(String name) {
-//        tnmtsList.add(new Tnmt(name, ));
-//        tnmtsListAdapter.notifyDataSetChanged();
-//        mManager.addTnmt(name);
+        Tnmt tnmt = new Tnmt(name, (int)(Math.random() * 1000000), false);
+        tnmtsList.add(tnmt);
+        mManager.addTnmt(tnmt);
+        tnmtsListAdapter.notifyDataSetChanged();
     }
 }

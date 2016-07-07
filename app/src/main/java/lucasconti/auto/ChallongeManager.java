@@ -24,8 +24,6 @@ import java.util.Map;
  * Created by Lucas on 6/6/2016.
  */
 public class ChallongeManager {
-    private static final String TAG = "ChallongeManager";
-    private String username = "lconti97";
     private String apiKey = "4FL28vfZR3xRZSJToJnXUDUgD4iXDQDiUziLVSEl";
     private static final String BASE_URL = "https://api.challonge.com/v1/";
     private RequestQueue queue;
@@ -42,28 +40,6 @@ public class ChallongeManager {
         return new ChallongeManager(context);
     }
 
-    public void test() {
-        String url = "https://api.challonge.com/v1/tournaments.json?api_key=" + apiKey;
-        JsonArrayRequest testRequest = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.i(TAG, "Response: " + response.toString());
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-
-
-// Add the request to the RequestQueue.
-        queue.add(testRequest);
-    }
-
     public void getTnmts(Response.Listener<JSONArray> listener) {
         String url = BASE_URL + "tournaments.json?api_key=" + apiKey;
         JsonArrayRequest request = new JsonArrayRequest(url, listener, new Response.ErrorListener() {
@@ -75,13 +51,12 @@ public class ChallongeManager {
         queue.add(request);
     }
 
-    public void addTnmt(final String name) {
+    public void addTnmt(final Tnmt tnmt) {
         String url = BASE_URL + "tournaments.json?api_key=" + apiKey;
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("t", response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -93,11 +68,28 @@ public class ChallongeManager {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("tournament[name]", name);
-                params.put("tournament[url]", "" +  (int)(Math.floor(Math.random() * 100000)));
+                params.put("tournament[name]", tnmt.getName());
+                params.put("tournament[url]", "" + tnmt.getId());
                 return params;
             }
         };
+        queue.add(request);
+    }
+
+    public void deleteTnmt(Tnmt tnmt) {
+        String url = BASE_URL + "tournaments/" + tnmt.getId() + ".json?api_key=" + apiKey;
+        StringRequest request = new StringRequest(Request.Method.DELETE, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
         queue.add(request);
     }
 
