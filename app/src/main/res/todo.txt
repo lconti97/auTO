@@ -1,3 +1,5 @@
 Disable SMSReceiver when no tournament is in progress
 Focus on AddPtcpDialogFrag's EditText as soon as it shows
 Tell the user when a ptcp has no phone number
+If the random requested tournament ID is taken, use a new one
+Save user's phone numbers in memory

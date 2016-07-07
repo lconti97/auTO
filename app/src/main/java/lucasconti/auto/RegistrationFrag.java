@@ -13,22 +13,28 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.android.volley.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RegistrationFragment extends Fragment
+public class RegistrationFrag extends Fragment
         implements AddPtcpDialogFrag.AddPtcpDialogListener,
         EditPtcpDialogFrag.EditPtcpDialogListener {
 
-    private static final String TAG = "RegistrationFragment" ;
+    private static final String TAG = "RegistrationFrag" ;
     private static final int REQUEST_SMS = 50;
     public static final String TAG_NAME = "name";
     public static final String TAG_NUMBER = "number";
+    public static final String TAG_TNMT_URL = "tnmtUrl";
 
-    private ChallongeManager manager;
+    private ChallongeManager mManager;
     private ListView ptcpsList;
     private ArrayAdapter<Ptcp> ptcpsAdapter;
     private FragmentManager fm;
@@ -38,13 +44,28 @@ public class RegistrationFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_registration, container, false);
+        View v = inflater.inflate(R.layout.frag_registration, container, false);
         String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
         askPermissions(permissions);
+        fm = getChildFragmentManager();
+        mManager = ChallongeManager.get(getActivity());
         mPtcps = new ArrayList<>();
-        mPtcps.add(new Ptcp("Kirodin", "17164720456"));
-        mPtcps.add(new Ptcp("Zain", "17164728811"));
-        mPtcps.add(new Ptcp("Hbox", "17164728005"));
+        String id = getArguments().getString(TAG_TNMT_URL);
+        mManager.getPtcps(id, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = response.length() - 1; i >= 0;  i--) {
+                        String name = response.getJSONObject(i).getJSONObject("participant")
+                                .getString("name");
+                        mPtcps.add(new Ptcp(name, "0"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ptcpsAdapter.notifyDataSetChanged();
+            }
+        });
         ptcpsList = (ListView) v.findViewById(R.id.ptcps_list);
         ptcpsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,8 +82,6 @@ public class RegistrationFragment extends Fragment
         ptcpsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mPtcps);
         ptcpsList.setAdapter(ptcpsAdapter);
-
-        fm = getChildFragmentManager();
 
         return v;
     }

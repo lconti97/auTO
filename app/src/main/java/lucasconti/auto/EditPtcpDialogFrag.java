@@ -49,8 +49,8 @@ public class EditPtcpDialogFrag extends DialogFragment {
         mPhoneText = (EditText) v.findViewById(R.id.dialog_phone_edit_text);
         Bundle b = getArguments();
         if (b != null) {
-            mNameText.setText(b.getString(RegistrationFragment.TAG_NAME, ""));
-            mPhoneText.setText(b.getString(RegistrationFragment.TAG_NUMBER, ""));
+            mNameText.setText(b.getString(RegistrationFrag.TAG_NAME, ""));
+            mPhoneText.setText(b.getString(RegistrationFrag.TAG_NUMBER, ""));
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Edit participant")
