@@ -5,12 +5,12 @@ package lucasconti.auto;
  */
 public class Tnmt {
     private String mName;
-    private int mId;
+    private String mUrl;
     private boolean mStarted;
 
-    public Tnmt(String name, int id, boolean started) {
+    public Tnmt(String name, String url, boolean started) {
         mName = name;
-        mId = id;
+        mUrl = url;
         mStarted = started;
     }
 
@@ -23,8 +23,8 @@ public class Tnmt {
         return mName;
     }
 
-    public int getId() {
-        return mId;
+    public String getUrl() {
+        return mUrl;
     }
 
     public boolean isStarted() {
