@@ -3,6 +3,7 @@ package lucasconti.auto;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -40,6 +42,7 @@ public class RegistrationFrag extends Fragment
     private FragmentManager fm;
     private ArrayList<Ptcp> mPtcps;
     private Ptcp mCurrPtcp;
+    private FloatingActionButton mFab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,7 +85,13 @@ public class RegistrationFrag extends Fragment
         ptcpsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, mPtcps);
         ptcpsList.setAdapter(ptcpsAdapter);
-
+        mFab = (FloatingActionButton) v.findViewById(R.id.fab_registration);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addParticipant();
+            }
+        });
         return v;
     }
 
