@@ -33,18 +33,18 @@ public class MainActivity extends AppCompatActivity {
             fm.beginTransaction().add(R.id.content, tnmtListFrag).commit();
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tnmtListFrag.onFabClick();
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                tnmtListFrag.onFabClick();
 //                regFrag.addParticipant();
 //                fm.beginTransaction().replace(R.id.content, new RunTnmtFrag())
 //                        .commit();
 //                ChallongeManager manager = new ChallongeManager(getApplicationContext());
 //                manager.test();
-            }
-        });
+//            }
+//        });
     }
 
     @Override
