@@ -52,10 +52,12 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
                         JSONObject intermediateJSON = (JSONObject) response.get(i);
                         JSONObject tnmtJSON = (JSONObject) intermediateJSON.get("tournament");
                         String name = tnmtJSON.getString("name");
-                        int id = Integer.parseInt(tnmtJSON.getString("id"));
+                        String url = tnmtJSON.getString("url");
+                        String id = tnmtJSON.getString("id");
+                        Log.i("t", name + " " + id);
                         String startedString = tnmtJSON.getString("started_at");
                         boolean started = !startedString.equals("null");
-                        tnmtsList.add(new Tnmt(name, id, started));
+                        tnmtsList.add(new Tnmt(name, url, started));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -68,10 +70,11 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RegistrationFrag frag = new RegistrationFrag();
                 Bundle b = new Bundle();
-                b.putString(RegistrationFrag.TAG_TNMT_URL, tnmtsList.get(position).getId() + "");
+                b.putString(RegistrationFrag.TAG_TNMT_URL, tnmtsList.get(position).getUrl());
                 frag.setArguments(b);
                 FragmentManager fm = getFragmentManager();
-                fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag).commit();
+                fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag)
+                        .commitAllowingStateLoss();
             }
         });
         tnmtsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -103,9 +106,14 @@ public class TnmtListFrag extends Fragment implements MainActivity.FabListener,
 
     @Override
     public void onPositiveClick(String name) {
-        Tnmt tnmt = new Tnmt(name, (int)(Math.random() * 1000000), false);
-        tnmtsList.add(tnmt);
-        mManager.addTnmt(tnmt);
-        tnmtsListAdapter.notifyDataSetChanged();
+        String url = "t" + (int)(Math.random() * 1000000);
+        final Tnmt tnmt = new Tnmt(name, url + "", false);
+        mManager.addTnmt(tnmt, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                tnmtsList.add(tnmt);
+                tnmtsListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }

@@ -51,15 +51,10 @@ public class ChallongeManager {
         queue.add(request);
     }
 
-    public void addTnmt(final Tnmt tnmt) {
+    public void addTnmt(final Tnmt tnmt, Response.Listener<String> listener) {
         String url = BASE_URL + "tournaments.json?api_key=" + apiKey;
         StringRequest request = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                    }
-                },
-                new Response.ErrorListener() {
+                listener, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         logError(error);
@@ -69,7 +64,7 @@ public class ChallongeManager {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("tournament[name]", tnmt.getName());
-                params.put("tournament[url]", "" + tnmt.getId());
+                params.put("tournament[url]", "" + tnmt.getUrl());
                 return params;
             }
         };
@@ -77,12 +72,11 @@ public class ChallongeManager {
     }
 
     public void deleteTnmt(Tnmt tnmt) {
-        String url = BASE_URL + "tournaments/" + tnmt.getId() + ".json?api_key=" + apiKey;
+        String url = BASE_URL + "tournaments/" + tnmt.getUrl() + ".json?api_key=" + apiKey;
         StringRequest request = new StringRequest(Request.Method.DELETE, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                     }
                 }, new Response.ErrorListener() {
             @Override
