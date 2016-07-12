@@ -21,7 +21,6 @@ public class EditPtcpDialogFrag extends DialogFragment {
     private EditText mPhoneText;
     public interface EditPtcpDialogListener {
         public void onEditPtcpDialogPositiveClick(String name, String phoneNumber);
-        public void onEditPtcpDialogNegativeClick();
     }
     private EditPtcpDialogListener mListener;
 
@@ -64,16 +63,10 @@ public class EditPtcpDialogFrag extends DialogFragment {
                                 mNameText.getText().toString(), mPhoneText.getText().toString());
                     }
                 })
-                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                })
-                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.onEditPtcpDialogNegativeClick();
                     }
                 });
         return builder.create();

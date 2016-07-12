@@ -8,10 +8,12 @@ import java.util.ArrayList;
 public class Ptcp {
     private String mName;
     private String mPhoneNumber;
+    private String mId;
 
-    public Ptcp(String name, String phoneNumber) {
+    public Ptcp(String name, String phoneNumber, String id) {
         mName = name;
         mPhoneNumber = phoneNumber;
+        mId = id;
     }
 
     public String getPhoneNumber() {
@@ -22,6 +24,8 @@ public class Ptcp {
         return mName;
     }
 
+    public String getId() { return mId; }
+
     public void setName(String name) {
         mName = name;
     }
@@ -29,6 +33,8 @@ public class Ptcp {
     public void setPhoneNumber(String phoneNumber) {
         mPhoneNumber = phoneNumber;
     }
+
+    public void setId(String id) { mId = id; }
 
     @Override
     public String toString() {
