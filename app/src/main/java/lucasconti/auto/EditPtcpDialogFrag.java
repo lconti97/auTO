@@ -14,6 +14,8 @@ import android.widget.EditText;
  * Created by Lucas on 6/26/2016.
  */
 public class EditPtcpDialogFrag extends DialogFragment {
+    public static final String TAG_NAME = "name";
+    public static final String TAG_NUMBER = "number";
 
     private EditText mNameText;
     private EditText mPhoneText;
@@ -49,8 +51,8 @@ public class EditPtcpDialogFrag extends DialogFragment {
         mPhoneText = (EditText) v.findViewById(R.id.dialog_phone_edit_text);
         Bundle b = getArguments();
         if (b != null) {
-            mNameText.setText(b.getString(RegistrationFrag.TAG_NAME, ""));
-            mPhoneText.setText(b.getString(RegistrationFrag.TAG_NUMBER, ""));
+            mNameText.setText(b.getString(TAG_NAME, ""));
+            mPhoneText.setText(b.getString(TAG_NUMBER, ""));
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Edit participant")
