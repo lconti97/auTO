@@ -74,10 +74,16 @@ public class RegistrationFrag extends Fragment
     }
 
     @Override
-    public void onEditPtcpDialogPositiveClick(String name, String phoneNumber) {
-        mCurrPtcp.setName(name);
-        mCurrPtcp.setPhoneNumber(phoneNumber);
-        ptcpsAdapter.notifyDataSetChanged();
+    public void onEditPtcpDialogPositiveClick(final String name, final String phoneNumber) {
+        mManager.updatePtcp(mTnmtUrl, mCurrPtcp.getId(), name, phoneNumber,
+                new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                mCurrPtcp.setName(name);
+                mCurrPtcp.setPhoneNumber(phoneNumber);
+                ptcpsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

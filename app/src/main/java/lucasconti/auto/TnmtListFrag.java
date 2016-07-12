@@ -87,9 +87,13 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mManager.deleteTnmt(mTnmtsList.get(position));
-                        mTnmtsList.remove(position);
-                        mTnmtsListAdapter.notifyDataSetChanged();
+                        mManager.deleteTnmt(mTnmtsList.get(position), new Response.Listener() {
+                            @Override
+                            public void onResponse(Object response) {
+                                mTnmtsList.remove(position);
+                                mTnmtsListAdapter.notifyDataSetChanged();
+                            }
+                        });
                     }
                 }).create();
         dialog.show();
