@@ -98,6 +98,39 @@ public class ChallongeManager {
         queue.add(request);
     }
 
+    public void addPtcp(String tnmtUrl, final Ptcp ptcp, Response.Listener<String> listener) {
+        String url = BASE_URL + "tournaments/" + tnmtUrl + "/participants.json?api_key=" + apiKey;
+        StringRequest request = new StringRequest(Request.Method.POST, url, listener,
+                new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("participant[name]", ptcp.getName());
+                return params;
+            }
+        };
+        queue.add(request);
+    }
+
+    public void deletePtcp(String tnmtUrl, final Ptcp ptcp, Response.Listener<String> listener) {
+        String url = BASE_URL + "tournaments/" + tnmtUrl + "/participants/" + ptcp.getId()
+                 + ".json?api_key=" + apiKey;
+        StringRequest request = new StringRequest(Request.Method.DELETE, url, listener,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+        };
+        queue.add(request);
+    }
+
     private void logError(VolleyError error) {
         String json = null;
         NetworkResponse response = error.networkResponse;

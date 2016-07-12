@@ -18,6 +18,7 @@ import com.android.volley.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class RegistrationFrag extends Fragment
     private ArrayList<Ptcp> mPtcps;
     private FloatingActionButton mFab;
     private Ptcp mCurrPtcp;
+    private String mTnmtUrl;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,21 +46,31 @@ public class RegistrationFrag extends Fragment
         askPermissions();
         mChildFm = getChildFragmentManager();
         mManager = ChallongeManager.get(getActivity());
+        mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         setupPtcpList(v);
         getPtcps();
         setupFab(v);
         return v;
     }
 
-    public void addParticipant() {
-        AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
-        dialog.show(mChildFm, "AddPtcpDialogFrag");
-    }
-
     @Override
     public void onAddPtcpDialogPositiveClick(String name, String phoneNumber) {
-        mPtcps.add(new Ptcp(name, phoneNumber));
-        ptcpsAdapter.notifyDataSetChanged();
+        final Ptcp ptcp = new Ptcp(name, phoneNumber, null);
+        mManager.addPtcp(mTnmtUrl, ptcp, new Response.Listener<String>(){
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject intermediateJSON = new JSONObject(response);
+                    JSONObject ptcpJSON = intermediateJSON.getJSONObject("participant");
+                    ptcp.setId(ptcpJSON.getString("id"));
+                }
+                catch (JSONException e) {
+
+                }
+                mPtcps.add(ptcp);
+                ptcpsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -70,8 +82,13 @@ public class RegistrationFrag extends Fragment
 
     @Override
     public void onEditPtcpDialogNegativeClick() {
-        mPtcps.remove(mCurrPtcp);
-        ptcpsAdapter.notifyDataSetChanged();
+        mManager.deletePtcp(mTnmtUrl, mCurrPtcp, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                mPtcps.remove(mCurrPtcp);
+                ptcpsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void setupPtcpList(View v) {
@@ -108,16 +125,16 @@ public class RegistrationFrag extends Fragment
     }
 
     private void getPtcps() {
-        String url = getArguments().getString(TAG_TNMT_URL);
-        mManager.getPtcps(url, new Response.Listener<JSONArray>() {
+        mManager.getPtcps(mTnmtUrl, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {
                     for (int i = response.length() - 1; i >= 0;  i--) {
-                        String name = response.getJSONObject(i).getJSONObject("participant")
-                                .getString("name");
+                        JSONObject ptcpJSON = response.getJSONObject(i).getJSONObject("participant");
+                        String name = ptcpJSON.getString("name");
+                        String id = ptcpJSON.getString("id");
                         // TODO: 7/11/2016 give ptcps phone numbers
-                        mPtcps.add(new Ptcp(name, "0"));
+                        mPtcps.add(new Ptcp(name, "0", id));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -141,7 +158,8 @@ public class RegistrationFrag extends Fragment
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addParticipant();
+                AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
+                dialog.show(mChildFm, "AddPtcpDialogFrag");
             }
         });
     }
