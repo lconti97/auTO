@@ -1,6 +1,8 @@
 package lucasconti.auto;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
@@ -38,6 +40,7 @@ public class RegistrationFrag extends Fragment
     private FloatingActionButton mFab;
     private Ptcp mCurrPtcp;
     private String mTnmtUrl;
+    private SharedPreferences mPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +50,7 @@ public class RegistrationFrag extends Fragment
         mChildFm = getChildFragmentManager();
         mManager = ChallongeManager.get(getActivity());
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
+        mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         setupPtcpList(v);
         getPtcps();
         setupFab(v);
@@ -65,10 +69,11 @@ public class RegistrationFrag extends Fragment
                     ptcp.setId(ptcpJSON.getString("id"));
                 }
                 catch (JSONException e) {
-
+                    e.printStackTrace();
                 }
                 mPtcps.add(ptcp);
                 ptcpsAdapter.notifyDataSetChanged();
+                storePtcpPhoneNumber(ptcp.getId(), ptcp.getPhoneNumber());
             }
         });
     }
@@ -139,8 +144,8 @@ public class RegistrationFrag extends Fragment
                         JSONObject ptcpJSON = response.getJSONObject(i).getJSONObject("participant");
                         String name = ptcpJSON.getString("name");
                         String id = ptcpJSON.getString("id");
-                        // TODO: 7/11/2016 give ptcps phone numbers
-                        mPtcps.add(new Ptcp(name, "0", id));
+                        String phoneNumber = getStoredPhoneNumber(id);
+                        mPtcps.add(new Ptcp(name, phoneNumber, id));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -168,6 +173,16 @@ public class RegistrationFrag extends Fragment
                 dialog.show(mChildFm, "AddPtcpDialogFrag");
             }
         });
+    }
+
+    private void storePtcpPhoneNumber(String ptcpId, String phoneNumber) {
+        if (!mPreferences.contains(ptcpId)) {
+            mPreferences.edit().putString(ptcpId, phoneNumber).apply();
+        }
+    }
+
+    private String getStoredPhoneNumber(String ptcpId) {
+        return mPreferences.getString(ptcpId, "");
     }
 
 }
