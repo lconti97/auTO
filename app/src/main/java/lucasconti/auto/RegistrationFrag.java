@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -23,98 +22,37 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class RegistrationFrag extends Fragment
         implements AddPtcpDialogFrag.AddPtcpDialogListener,
         EditPtcpDialogFrag.EditPtcpDialogListener {
 
-    private static final String TAG = "RegistrationFrag" ;
     private static final int REQUEST_SMS = 50;
-    public static final String TAG_NAME = "name";
-    public static final String TAG_NUMBER = "number";
     public static final String TAG_TNMT_URL = "tnmtUrl";
 
     private ChallongeManager mManager;
     private ListView ptcpsList;
     private ArrayAdapter<Ptcp> ptcpsAdapter;
-    private FragmentManager fm;
+    private FragmentManager mChildFm;
     private ArrayList<Ptcp> mPtcps;
-    private Ptcp mCurrPtcp;
     private FloatingActionButton mFab;
+    private Ptcp mCurrPtcp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frag_registration, container, false);
-        String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
-        askPermissions(permissions);
-        fm = getChildFragmentManager();
+        askPermissions();
+        mChildFm = getChildFragmentManager();
         mManager = ChallongeManager.get(getActivity());
-        mPtcps = new ArrayList<>();
-        String id = getArguments().getString(TAG_TNMT_URL);
-        mManager.getPtcps(id, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = response.length() - 1; i >= 0;  i--) {
-                        String name = response.getJSONObject(i).getJSONObject("participant")
-                                .getString("name");
-                        mPtcps.add(new Ptcp(name, "0"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                ptcpsAdapter.notifyDataSetChanged();
-            }
-        });
-        ptcpsList = (ListView) v.findViewById(R.id.ptcps_list);
-        ptcpsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCurrPtcp = (Ptcp)parent.getItemAtPosition(position);
-                EditPtcpDialogFrag frag = new EditPtcpDialogFrag();
-                Bundle b = new Bundle();
-                b.putString(TAG_NAME, mCurrPtcp.getName());
-                b.putString(TAG_NUMBER, mCurrPtcp.getPhoneNumber());
-                frag.setArguments(b);
-                frag.show(fm, "EditPtcpDialogFrag");
-            }
-        });
-        ptcpsAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, mPtcps);
-        ptcpsList.setAdapter(ptcpsAdapter);
-        mFab = (FloatingActionButton) v.findViewById(R.id.fab_registration);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addParticipant();
-            }
-        });
+        setupPtcpList(v);
+        getPtcps();
+        setupFab(v);
         return v;
-    }
-
-    private void askPermissions(String[] permissions) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            ArrayList<String> permissionsNeeded = new ArrayList<>();
-            for (int i = 0; i < permissions.length; i++) {
-                int permissionCheck = getContext().checkSelfPermission(permissions[i]);
-                if (permissionCheck == PackageManager.PERMISSION_DENIED) {
-                    permissionsNeeded.add(permissions[i]);
-                }
-            }
-            if (permissionsNeeded.size() != 0) {
-                String[] permissionsToAsk = Arrays.copyOf(permissionsNeeded.toArray(),
-                        permissionsNeeded.size(), String[].class);
-                requestPermissions(permissionsToAsk, REQUEST_SMS);
-            }
-        }
     }
 
     public void addParticipant() {
         AddPtcpDialogFrag dialog = new AddPtcpDialogFrag();
-        dialog.show(fm, "AddPtcpDialogFrag");
+        dialog.show(mChildFm, "AddPtcpDialogFrag");
     }
 
     @Override
@@ -134,6 +72,78 @@ public class RegistrationFrag extends Fragment
     public void onEditPtcpDialogNegativeClick() {
         mPtcps.remove(mCurrPtcp);
         ptcpsAdapter.notifyDataSetChanged();
+    }
+
+    private void setupPtcpList(View v) {
+        mPtcps = new ArrayList<>();
+        ptcpsList = (ListView) v.findViewById(R.id.ptcps_list);
+        ptcpsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mCurrPtcp = (Ptcp)parent.getItemAtPosition(position);
+                showEditPtcpDialog();
+            }
+        });
+        ptcpsAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, mPtcps);
+        ptcpsList.setAdapter(ptcpsAdapter);
+    }
+
+    private void askPermissions() {
+        String[] permissions = {Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS};
+        if (Build.VERSION.SDK_INT >= 23) {
+            ArrayList<String> permissionsNeeded = new ArrayList<>();
+            for (int i = 0; i < permissions.length; i++) {
+                int permissionCheck = getContext().checkSelfPermission(permissions[i]);
+                if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                    permissionsNeeded.add(permissions[i]);
+                }
+            }
+            if (permissionsNeeded.size() != 0) {
+                String[] permissionsToAsk = Arrays.copyOf(permissionsNeeded.toArray(),
+                        permissionsNeeded.size(), String[].class);
+                requestPermissions(permissionsToAsk, REQUEST_SMS);
+            }
+        }
+    }
+
+    private void getPtcps() {
+        String url = getArguments().getString(TAG_TNMT_URL);
+        mManager.getPtcps(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = response.length() - 1; i >= 0;  i--) {
+                        String name = response.getJSONObject(i).getJSONObject("participant")
+                                .getString("name");
+                        // TODO: 7/11/2016 give ptcps phone numbers
+                        mPtcps.add(new Ptcp(name, "0"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ptcpsAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void showEditPtcpDialog() {
+        EditPtcpDialogFrag frag = new EditPtcpDialogFrag();
+        Bundle b = new Bundle();
+        b.putString(EditPtcpDialogFrag.TAG_NAME, mCurrPtcp.getName());
+        b.putString(EditPtcpDialogFrag.TAG_NUMBER, mCurrPtcp.getPhoneNumber());
+        frag.setArguments(b);
+        frag.show(mChildFm, "EditPtcpDialogFrag");
+    }
+
+    private void setupFab(View v) {
+        mFab = (FloatingActionButton) v.findViewById(R.id.fab_registration);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addParticipant();
+            }
+        });
     }
 
 }
