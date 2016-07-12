@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,12 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        ((MainActivity) getActivity()).setTitle("Tournaments");
+    }
+
+    @Override
     public void onPositiveClick(String name) {
         addTnmt(name);
     }
@@ -75,6 +82,7 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
         RegistrationFrag frag = new RegistrationFrag();
         Bundle b = new Bundle();
         b.putString(RegistrationFrag.TAG_TNMT_URL, tnmt.getUrl());
+        b.putString(RegistrationFrag.TAG_TNMT_NAME, tnmt.getName());
         frag.setArguments(b);
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag)

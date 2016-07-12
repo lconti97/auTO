@@ -2,6 +2,7 @@ package lucasconti.auto;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -9,6 +10,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,7 @@ public class RegistrationFrag extends Fragment
 
     private static final int REQUEST_SMS = 50;
     public static final String TAG_TNMT_URL = "tnmtUrl";
+    public static final String TAG_TNMT_NAME = "tnmtName";
 
     private ChallongeManager mManager;
     private ListView ptcpsList;
@@ -40,6 +44,7 @@ public class RegistrationFrag extends Fragment
     private FloatingActionButton mFab;
     private Ptcp mCurrPtcp;
     private String mTnmtUrl;
+    private String mTnmtName;
     private SharedPreferences mPreferences;
 
     @Override
@@ -50,12 +55,20 @@ public class RegistrationFrag extends Fragment
         mChildFm = getChildFragmentManager();
         mManager = ChallongeManager.get(getActivity());
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
+        mTnmtName = getArguments().getString(TAG_TNMT_NAME);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        ((MainActivity) getActivity()).setTitle(mTnmtName);
         setupPtcpList(v);
         getPtcps();
         setupFab(v);
         return v;
     }
+
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        ((MainActivity) getActivity()).setTitle("Tournaments");
+//    }
 
     @Override
     public void onAddPtcpDialogPositiveClick(String name, String phoneNumber) {
@@ -91,12 +104,11 @@ public class RegistrationFrag extends Fragment
         });
     }
 
-    @Override
-    public void onEditPtcpDialogNegativeClick() {
-        mManager.deletePtcp(mTnmtUrl, mCurrPtcp, new Response.Listener<String>() {
+    private void deletePtcp(final Ptcp ptcp) {
+        mManager.deletePtcp(mTnmtUrl, ptcp, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                mPtcps.remove(mCurrPtcp);
+                mPtcps.remove(ptcp);
                 ptcpsAdapter.notifyDataSetChanged();
             }
         });
@@ -110,6 +122,20 @@ public class RegistrationFrag extends Fragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mCurrPtcp = (Ptcp)parent.getItemAtPosition(position);
                 showEditPtcpDialog();
+            }
+        });
+        ptcpsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                mCurrPtcp = (Ptcp)parent.getItemAtPosition(position);
+                new AlertDialog.Builder(getActivity()).setItems(new String[] {"Delete"},
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deletePtcp(mCurrPtcp);
+                            }
+                        }).show();
+                return true;
             }
         });
         ptcpsAdapter = new ArrayAdapter<>(getActivity(),

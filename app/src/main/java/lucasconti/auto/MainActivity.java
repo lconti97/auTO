@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +18,14 @@ public class MainActivity extends AppCompatActivity {
         showTnmtListFrag(savedInstanceState);
     }
 
+    public void setTitle(String title) {
+        mToolbar.setTitle(title);
+    }
+
     private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setTitle("Tournaments");
+        setSupportActionBar(mToolbar);
     }
 
     private void showTnmtListFrag(Bundle savedInstanceState) {
