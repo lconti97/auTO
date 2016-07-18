@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -18,7 +17,7 @@ public class AddTnmtDialogFrag extends DialogFragment {
     private AddTnmtDialogListener mListener;
     private EditText mTnmtNameText;
     public interface AddTnmtDialogListener {
-        public void onPositiveClick(String name);
+        void onAddTnmtDialogPositiveClick(String name);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class AddTnmtDialogFrag extends DialogFragment {
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.onPositiveClick(mTnmtNameText.getText().toString());
+                        mListener.onAddTnmtDialogPositiveClick(mTnmtNameText.getText().toString());
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

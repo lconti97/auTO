@@ -51,7 +51,7 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
     }
 
     @Override
-    public void onPositiveClick(String name) {
+    public void onAddTnmtDialogPositiveClick(String name) {
         addTnmt(name);
     }
 
@@ -64,7 +64,13 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
         mTnmtsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                swapToRegistrationFrag(mTnmtsList.get(position));
+                Tnmt tnmt = mTnmtsList.get(position);
+                if (tnmt.isStarted()) {
+                    swapToMatchQueueFrag(tnmt);
+                }
+                else {
+                    swapToRegistrationFrag(tnmt);
+                }
             }
         });
         mTnmtsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -83,6 +89,16 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
         Bundle b = new Bundle();
         b.putString(RegistrationFrag.TAG_TNMT_URL, tnmt.getUrl());
         b.putString(RegistrationFrag.TAG_TNMT_NAME, tnmt.getName());
+        frag.setArguments(b);
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag)
+                .commit();
+    }
+
+    private void swapToMatchQueueFrag(Tnmt tnmt) {
+        MatchQueueFrag frag = new MatchQueueFrag();
+        Bundle b = new Bundle();
+        b.putString(MatchQueueFrag.TAG_TNMT_URL, tnmt.getUrl());
         frag.setArguments(b);
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag)
