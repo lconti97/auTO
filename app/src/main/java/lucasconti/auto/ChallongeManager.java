@@ -135,5 +135,12 @@ public class ChallongeManager {
             queue.add(request);
         }
 
+        public void getMatches(String tnmtUrl, Response.Listener<JSONArray> listener) {
+            String url = BASE_URL + "/tournaments/" + tnmtUrl + "/matches.json?api_key="
+                    + apiKey;
+            JsonArrayRequest request = new JsonArrayRequest(url, listener, mErrorListener);
+            queue.add(request);
+        }
+
     }
 

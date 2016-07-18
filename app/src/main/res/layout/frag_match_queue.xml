@@ -33,4 +33,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/listview_match_queue_pending" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Completed"
+        android:id="@+id/textview_match_queue_completed"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listview_match_queue_completed" />
+
 </LinearLayout>
