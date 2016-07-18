@@ -18,9 +18,9 @@ public class MatchQueueFrag extends Fragment {
     public static final String TAG_TNMT_URL = "tnmt_url";
     public static final String TAG_TNMT_NAME = "tnmt_name";
 
-    private ArrayList<String> mMatchList;
-    private ListView mMatchListView;
-    private ArrayAdapter<String> mMatchListAdapter;
+    private ArrayList<String>[] mMatchLists = new ArrayList[3];
+    private ListView[] mMatchListViews = new ListView[3];
+    private ArrayAdapter<String>[] mMatchListAdapters = new ArrayAdapter[3];
     private String mTnmtUrl;
     private String mTnmtName;
 
@@ -36,11 +36,15 @@ public class MatchQueueFrag extends Fragment {
     }
 
     private void setupMatchQueue(View v) {
-        mMatchListView = ((ListView) v.findViewById(R.id.listview_match_queue));
-        mMatchList = new ArrayList<>(Arrays.asList("Armada v Hbox", "Mang0 v Mew2King",
-                "Plup v Westballz"));
-        mMatchListAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
-                mMatchList);
-        mMatchListView.setAdapter(mMatchListAdapter);
+        mMatchListViews[0] = ((ListView) v.findViewById(R.id.listview_match_queue_ready));
+        mMatchListViews[1] = ((ListView) v.findViewById(R.id.listview_match_queue_in_progress));
+        mMatchListViews[2] = ((ListView) v.findViewById(R.id.listview_match_queue_pending));
+        for (int i = 0; i < 3; i++) {
+            mMatchLists[i] = new ArrayList<>(Arrays.asList("Armada v Hbox", "Mang0 v Mew2King",
+                    "Plup v Westballz"));
+            mMatchListAdapters[i] = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
+                    mMatchLists[i]);
+            mMatchListViews[i].setAdapter(mMatchListAdapters[i]);
+        }
     }
 }
