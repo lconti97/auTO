@@ -57,18 +57,13 @@ public class RegistrationFrag extends Fragment
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         mTnmtName = getArguments().getString(TAG_TNMT_NAME);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        ((MainActivity) getActivity()).setTitle(mTnmtName);
+        ((MainActivity) getActivity()).setTitle(mTnmtName + " Registration");
         setupPtcpList(v);
         getPtcps();
         setupFab(v);
         return v;
     }
 
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        ((MainActivity) getActivity()).setTitle("Tournaments");
-//    }
 
     @Override
     public void onAddPtcpDialogPositiveClick(String name, String phoneNumber) {

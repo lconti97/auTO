@@ -16,15 +16,21 @@ import java.util.Arrays;
  */
 public class MatchQueueFrag extends Fragment {
     public static final String TAG_TNMT_URL = "tnmt_url";
+    public static final String TAG_TNMT_NAME = "tnmt_name";
 
     private ArrayList<String> mMatchList;
     private ListView mMatchListView;
     private ArrayAdapter<String> mMatchListAdapter;
+    private String mTnmtUrl;
+    private String mTnmtName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frag_match_queue, null);
+        mTnmtName = getArguments().getString(TAG_TNMT_NAME);
+        mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
+        ((MainActivity) getActivity()).setTitle(mTnmtName + " Match Queue");
         setupMatchQueue(v);
         return v;
     }

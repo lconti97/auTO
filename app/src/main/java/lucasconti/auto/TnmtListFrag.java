@@ -99,6 +99,7 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
         MatchQueueFrag frag = new MatchQueueFrag();
         Bundle b = new Bundle();
         b.putString(MatchQueueFrag.TAG_TNMT_URL, tnmt.getUrl());
+        b.putString(MatchQueueFrag.TAG_TNMT_NAME, tnmt.getName());
         frag.setArguments(b);
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().addToBackStack(null).replace(R.id.content, frag)
