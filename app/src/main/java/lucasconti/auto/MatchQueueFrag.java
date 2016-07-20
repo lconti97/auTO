@@ -2,6 +2,7 @@ package lucasconti.auto;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,9 @@ public class MatchQueueFrag extends Fragment {
     public static final String TAG_TNMT_URL = "tnmt_url";
     public static final String TAG_TNMT_NAME = "tnmt_name";
 
-    private ArrayList<String>[] mMatchLists = new ArrayList[4];
+    private ArrayList<Match>[] mMatchLists = new ArrayList[4];
     private ListView[] mMatchListViews = new ListView[4];
-    private ArrayAdapter<String>[] mMatchListAdapters = new ArrayAdapter[4];
+    private ArrayAdapter<Match>[] mMatchListAdapters = new ArrayAdapter[4];
     private String mTnmtUrl;
     private String mTnmtName;
     private ChallongeManager mManager;
@@ -65,22 +66,18 @@ public class MatchQueueFrag extends Fragment {
             public void onResponse(JSONArray response) {
                 try {
                     for (int i = 0; i < response.length(); i++) {
-                        JSONObject match = ((JSONObject) response.get(i)).getJSONObject("match");
-                        String state = match.getString("state");
-                        String name = match.optInt("player1_id") + " v " + match.optInt("player2_id");
-                        switch (state)  {
-                            case "open" :
-                                mMatchLists[0].add(name);
-                                break;
-                            case "pending" :
-                                mMatchLists[2].add(name);
-                                break;
-                            default:
-                                mMatchLists[3].add(name);
-                                break;
+                        JSONObject matchJSON = ((JSONObject) response.get(i)).getJSONObject("match");
+                        final String state = matchJSON.getString("state");
+                        int player1id = matchJSON.optInt("player1_id");
+                        int player2id = matchJSON.optInt("player2_id");
+                        if (player1id != 0 && player2id != 0) {
+                            createTwoPlayerMatch(player1id, player2id, state);
+                        }
+                        else if (player1id == 0 && player2id != 0) {
+
                         }
                     }
-                    for (ArrayAdapter<String> matchList : mMatchListAdapters) {
+                    for (ArrayAdapter<Match> matchList : mMatchListAdapters) {
                         matchList.notifyDataSetChanged();
                     }
                 }
@@ -89,5 +86,58 @@ public class MatchQueueFrag extends Fragment {
                 }
             }
         });
+    }
+
+    private void createTwoPlayerMatch(int player1id, int player2id, final String state) {
+        final Match match = new Match();
+        mManager.getPtcp(mTnmtUrl, player1id, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String player1name = response.getJSONObject("participant")
+                            .getString("name");
+                    match.setPlayer1Name(player1name);
+                    if (match.getPlayer2Name() != null) {
+                        addMatchToQueue(match, state);
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mManager.getPtcp(mTnmtUrl, player2id, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String player2name = response.getJSONObject("participant")
+                            .getString("name");
+                    match.setPlayer2Name(player2name);
+                    if (match.getPlayer1Name() != null) {
+                        addMatchToQueue(match, state);
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void addMatchToQueue(Match match, String state) {
+        switch (state)  {
+            case "open" :
+                mMatchLists[0].add(match);
+                mMatchListAdapters[0].notifyDataSetChanged();
+                break;
+            case "pending" :
+                mMatchLists[2].add(match);
+                mMatchListAdapters[2].notifyDataSetChanged();
+                break;
+            default:
+                mMatchLists[3].add(match);
+                mMatchListAdapters[3].notifyDataSetChanged();
+                break;
+        }
     }
 }
