@@ -90,6 +90,14 @@ public class ChallongeManager {
             queue.add(request);
         }
 
+        public void getPtcp(String tnmtUrl, int id, Response.Listener<JSONObject> listener) {
+            String url = BASE_URL + "tournaments/" + tnmtUrl + "/participants/" + id
+                    + ".json?api_key=" + apiKey;
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                    listener, mErrorListener);
+            queue.add(request);
+        }
+
         public void addPtcp(String tnmtUrl, final Ptcp ptcp, Response.Listener<String> listener) {
             String url = BASE_URL + "tournaments/" + tnmtUrl + "/participants.json?api_key=" + apiKey;
             StringRequest request = new StringRequest(Request.Method.POST, url, listener,
@@ -132,6 +140,13 @@ public class ChallongeManager {
                     return params;
                 }
             };
+            queue.add(request);
+        }
+
+        public void getMatches(String tnmtUrl, Response.Listener<JSONArray> listener) {
+            String url = BASE_URL + "/tournaments/" + tnmtUrl + "/matches.json?api_key="
+                    + apiKey;
+            JsonArrayRequest request = new JsonArrayRequest(url, listener, mErrorListener);
             queue.add(request);
         }
 
