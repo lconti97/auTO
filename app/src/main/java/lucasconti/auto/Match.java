@@ -4,11 +4,22 @@ package lucasconti.auto;
  * Created by Lucas on 7/20/2016.
  */
 public class Match {
+    public static final String STATE_READY = "open";
+    public static final String STATE_IN_PROGRESS = "in_progress";
+    public static final String STATE_PENDING = "pending";
+    public static final String STATE_COMPLETED = "complete";
+
     private String mPlayer1Name;
     private String mPlayer2Name;
 
-    public Match() {
+    private String mState;
 
+    public Match(String state) {
+        mState = state;
+    }
+
+    public boolean isReady() {
+        return mState.equals(STATE_READY);
     }
 
     public void setPlayer1Name(String name) {
@@ -25,6 +36,14 @@ public class Match {
 
     public String getPlayer2Name() {
         return mPlayer2Name;
+    }
+
+    public String getState() {
+        return mState;
+    }
+
+    public void setState(String state) {
+        mState = state;
     }
 
     @Override

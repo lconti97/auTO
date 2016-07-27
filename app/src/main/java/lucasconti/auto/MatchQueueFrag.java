@@ -1,11 +1,13 @@
 package lucasconti.auto;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -16,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Lucas on 7/18/2016.
@@ -52,15 +53,22 @@ public class MatchQueueFrag extends Fragment {
         for (int i = 0; i < mMatchLists.length; i++) {
             mMatchLists[i] = new ArrayList<>();
         }
-        sortMatches();
+        getMatches();
         for (int j = 0; j < 4; j++) {
             mMatchListAdapters[j] = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
                     mMatchLists[j]);
             mMatchListViews[j].setAdapter(mMatchListAdapters[j]);
         }
+        mMatchListViews[0].setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Match match = (Match) parent.getItemAtPosition(position);
+                showStartmatchDialog(match);
+            }
+        });
     }
 
-    private void sortMatches() {
+    private void getMatches() {
         mManager.getMatches(mTnmtUrl, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -89,7 +97,7 @@ public class MatchQueueFrag extends Fragment {
     }
 
     private void createTwoPlayerMatch(int player1id, int player2id, final String state) {
-        final Match match = new Match();
+        final Match match = new Match(state);
         mManager.getPtcp(mTnmtUrl, player1id, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -139,5 +147,30 @@ public class MatchQueueFrag extends Fragment {
                 mMatchListAdapters[3].notifyDataSetChanged();
                 break;
         }
+    }
+
+    private void showStartmatchDialog(final Match match)  {
+        new AlertDialog.Builder(getContext()).setTitle(match.toString())
+                .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (match.isReady()) {
+                            startMatch(match);
+                        }
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).show();
+    }
+
+    private void startMatch(Match match) {
+        mMatchLists[0].remove(match);
+        mMatchLists[1].add(match);
+        mMatchListAdapters[0].notifyDataSetChanged();
+        mMatchListAdapters[1].notifyDataSetChanged();
+        match.setState(Match.STATE_IN_PROGRESS);
     }
 }
