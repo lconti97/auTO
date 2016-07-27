@@ -151,7 +151,38 @@ public class ChallongeManager {
         }
 
         public void getPtcpNames(String tnmtUrl, final Match match, final Response.Listener<String> listener) {
+            if (match.getPlayer1Id() != 0 && match.getPlayer2Id() != 0) {
+                getPtcp(tnmtUrl, match.getPlayer1Id(), new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String player1Name = response.getJSONObject("participant")
+                                    .getString("name");
+                            match.setPlayer1Name(player1Name);
+                            if (match.getPlayer2Name() != null) {
+                                listener.onResponse(match.toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                });
+                getPtcp(tnmtUrl, match.getPlayer2Id(), new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String player2Name = response.getJSONObject("participant")
+                                    .getString("name");
+                            match.setPlayer2Name(player2Name);
+                            if (match.getPlayer1Name() != null) {
+                                listener.onResponse(match.toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
         }
 
         public void updateMatch(String tnmtUrl, String matchId, final String scoreString,

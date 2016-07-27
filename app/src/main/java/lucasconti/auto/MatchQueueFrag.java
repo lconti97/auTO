@@ -151,12 +151,16 @@ public class MatchQueueFrag extends Fragment {
     }
 
     private void endMatch(final Match match, String scoreString) {
+        int player1Score = Integer.parseInt(scoreString.substring(0,1));
+        int player2Score = Integer.parseInt(scoreString.substring(2));
         int winnerId = player1Score > player2Score ? match.getPlayer1Id() : match.getPlayer2Id();
         mManager.updateMatch(mTnmtUrl, match.getId(), scoreString, winnerId + "",
                 new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                mMatchLists[0].remove(match);
                 mMatchLists[3].add(match);
+                mMatchListAdapters[0].notifyDataSetChanged();
                 mMatchListAdapters[3].notifyDataSetChanged();
                 match.setState(Match.STATE_COMPLETED);
             }
@@ -170,6 +174,7 @@ public class MatchQueueFrag extends Fragment {
         final EditText player2ScoreEditText = (EditText) view.findViewById(
                 R.id.Dialog_submit_match_score_Player_2_score_Edit_text);
         new AlertDialog.Builder(getContext()).setTitle(match.toString())
+                .setView(view)
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
