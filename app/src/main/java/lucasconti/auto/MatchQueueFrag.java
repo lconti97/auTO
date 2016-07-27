@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -63,7 +64,15 @@ public class MatchQueueFrag extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Match match = (Match) parent.getItemAtPosition(position);
-                showStartmatchDialog(match);
+                showStartMatchDialog(match);
+            }
+        });
+        mMatchListViews[0].setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Match match = (Match) parent.getItemAtPosition(position);
+                showUpdateScoreDialog(match);
+                return true;
             }
         });
     }
@@ -75,15 +84,17 @@ public class MatchQueueFrag extends Fragment {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject matchJSON = ((JSONObject) response.get(i)).getJSONObject("match");
-                        final String state = matchJSON.getString("state");
+                        String matchId = matchJSON.getString("id");
+                        String state = matchJSON.getString("state");
                         int player1id = matchJSON.optInt("player1_id");
                         int player2id = matchJSON.optInt("player2_id");
-                        if (player1id != 0 && player2id != 0) {
-                            createTwoPlayerMatch(player1id, player2id, state);
-                        }
-                        else if (player1id == 0 && player2id != 0) {
-
-                        }
+                        final Match match = new Match(state, matchId, player1id, player2id);
+                        mManager.getPtcpNames(mTnmtUrl, match, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                addMatchToQueue(match);
+                            }
+                        });
                     }
                     for (ArrayAdapter<Match> matchList : mMatchListAdapters) {
                         matchList.notifyDataSetChanged();
@@ -96,43 +107,8 @@ public class MatchQueueFrag extends Fragment {
         });
     }
 
-    private void createTwoPlayerMatch(int player1id, int player2id, final String state) {
-        final Match match = new Match(state);
-        mManager.getPtcp(mTnmtUrl, player1id, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String player1name = response.getJSONObject("participant")
-                            .getString("name");
-                    match.setPlayer1Name(player1name);
-                    if (match.getPlayer2Name() != null) {
-                        addMatchToQueue(match, state);
-                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        mManager.getPtcp(mTnmtUrl, player2id, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String player2name = response.getJSONObject("participant")
-                            .getString("name");
-                    match.setPlayer2Name(player2name);
-                    if (match.getPlayer1Name() != null) {
-                        addMatchToQueue(match, state);
-                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void addMatchToQueue(Match match, String state) {
+    private void addMatchToQueue(Match match) {
+        String state = match.getState();
         switch (state)  {
             case "open" :
                 mMatchLists[0].add(match);
@@ -149,7 +125,7 @@ public class MatchQueueFrag extends Fragment {
         }
     }
 
-    private void showStartmatchDialog(final Match match)  {
+    private void showStartMatchDialog(final Match match)  {
         new AlertDialog.Builder(getContext()).setTitle(match.toString())
                 .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                     @Override
@@ -172,5 +148,41 @@ public class MatchQueueFrag extends Fragment {
         mMatchListAdapters[0].notifyDataSetChanged();
         mMatchListAdapters[1].notifyDataSetChanged();
         match.setState(Match.STATE_IN_PROGRESS);
+    }
+
+    private void endMatch(final Match match, String scoreString) {
+        int winnerId = player1Score > player2Score ? match.getPlayer1Id() : match.getPlayer2Id();
+        mManager.updateMatch(mTnmtUrl, match.getId(), scoreString, winnerId + "",
+                new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                mMatchLists[3].add(match);
+                mMatchListAdapters[3].notifyDataSetChanged();
+                match.setState(Match.STATE_COMPLETED);
+            }
+        });
+    }
+
+    private void showUpdateScoreDialog(final Match match) {
+        View view = getLayoutInflater(null).inflate(R.layout.dialog_update_match_score, null);
+        final EditText player1ScoreEditText = (EditText) view.findViewById(
+                R.id.Dialog_submit_match_score_Player_1_score_Edit_text);
+        final EditText player2ScoreEditText = (EditText) view.findViewById(
+                R.id.Dialog_submit_match_score_Player_2_score_Edit_text);
+        new AlertDialog.Builder(getContext()).setTitle(match.toString())
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String player1Score = player1ScoreEditText.getText().toString();
+                        String player2Score = player2ScoreEditText.getText().toString();
+                        String scoreString = player1Score + "-" + player2Score;
+                        endMatch(match, scoreString);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).show();
     }
 }

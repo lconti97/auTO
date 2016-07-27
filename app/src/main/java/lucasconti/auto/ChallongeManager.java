@@ -150,5 +150,26 @@ public class ChallongeManager {
             queue.add(request);
         }
 
+        public void getPtcpNames(String tnmtUrl, final Match match, final Response.Listener<String> listener) {
+                    }
+        }
+
+        public void updateMatch(String tnmtUrl, String matchId, final String scoreString,
+                                final String winnerId, Response.Listener<String> listener) {
+            String url = BASE_URL + "/tournaments/" + tnmtUrl + "/matches/" + matchId + ".json?"
+                    + "api_key=" + apiKey;
+            StringRequest request = new StringRequest(Request.Method.PUT,
+                    url, listener, mErrorListener) {
+                @Override
+                public Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("match[scores_csv]", scoreString);
+                    params.put("match[winner_id]", winnerId);
+                    return params;
+                }
+            };
+            queue.add(request);
+        }
+
     }
 

@@ -1,5 +1,12 @@
 package lucasconti.auto;
 
+import android.content.Context;
+
+import com.android.volley.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Lucas on 7/20/2016.
  */
@@ -11,11 +18,28 @@ public class Match {
 
     private String mPlayer1Name;
     private String mPlayer2Name;
-
+    private int mPlayer1Id;
+    private int mPlayer2Id;
     private String mState;
+    private String mId;
 
-    public Match(String state) {
+    public Match(String state, String id, int player1Id, int player2Id) {
         mState = state;
+        mId = id;
+        mPlayer1Id = player1Id;
+        mPlayer2Id = player2Id;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public int getPlayer1Id() {
+        return mPlayer1Id;
+    }
+
+    public int getPlayer2Id() {
+        return mPlayer2Id;
     }
 
     public boolean isReady() {
