@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +43,16 @@ public class MatchQueueFrag extends Fragment {
         mTnmtName = getArguments().getString(TAG_TNMT_NAME);
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         mManager = ChallongeManager.get(getContext());
-        ((MainActivity) getActivity()).setTitle(mTnmtName + " Match Queue");
         setupMatchQueue(v);
+        setupToolbar(v);
         return v;
+    }
+
+    private void setupToolbar(View v) {
+        setHasOptionsMenu(true);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbar.setTitle(mTnmtName  + " Match Queue");
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
     }
 
     private void setupMatchQueue(View v) {

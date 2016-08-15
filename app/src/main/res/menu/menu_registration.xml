@@ -4,6 +4,6 @@
     tools:context="lucasconti.auto.MainActivity" >
     <item android:id="@+id/action_finish"
         android:title="Finish Registration"
-        android:icon="@android:drawable/ic_menu_upload"
+        android:icon="@drawable/check"
         app:showAsAction="ifRoom"/>
 </menu>

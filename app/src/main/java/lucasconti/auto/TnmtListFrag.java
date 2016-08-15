@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
         setupTnmtsList(v);
         getTnmts();
         setupFab(v);
+        setupToolbar(v);
         mChildFm = getChildFragmentManager();
         return v;
     }
@@ -48,6 +50,13 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
     public void onStart() {
         super.onStart();
         ((MainActivity) getActivity()).setTitle("Tournaments");
+    }
+
+    private void setupToolbar(View v) {
+        setHasOptionsMenu(true);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbar.setTitle("Tournaments");
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
     }
 
     @Override

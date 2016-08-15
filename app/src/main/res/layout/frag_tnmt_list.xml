@@ -3,12 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listview_tnmts"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/list_view_padding_left"/>
+        android:paddingLeft="@dimen/list_view_padding_left"
+        android:layout_below="@id/toolbar"/>
 
     <include layout="@layout/fab"
         android:id="@+id/fab_tnmt_list"/>
