@@ -54,12 +54,16 @@ public class MatchQueueFrag extends Fragment {
         for (int i = 0; i < mMatchLists.length; i++) {
             mMatchLists[i] = new ArrayList<>();
         }
-        getMatches();
+        updateMatchesList();
         for (int j = 0; j < 4; j++) {
             mMatchListAdapters[j] = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
                     mMatchLists[j]);
             mMatchListViews[j].setAdapter(mMatchListAdapters[j]);
         }
+        setMatchListListeners();
+    }
+
+    private void setMatchListListeners() {
         mMatchListViews[0].setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,9 +79,19 @@ public class MatchQueueFrag extends Fragment {
                 return true;
             }
         });
+        mMatchListViews[1].setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Match match = (Match) parent.getItemAtPosition(position);
+                showUpdateScoreDialog(match);
+            }
+        });
     }
 
-    private void getMatches() {
+    private void updateMatchesList() {
+        for (int i = 0; i < mMatchLists.length; i++) {
+            mMatchLists[i].clear();
+        }
         mManager.getMatches(mTnmtUrl, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -159,8 +173,10 @@ public class MatchQueueFrag extends Fragment {
             @Override
             public void onResponse(String response) {
                 mMatchLists[0].remove(match);
+                mMatchLists[1].remove(match);
                 mMatchLists[3].add(match);
                 mMatchListAdapters[0].notifyDataSetChanged();
+                mMatchListAdapters[1].notifyDataSetChanged();
                 mMatchListAdapters[3].notifyDataSetChanged();
                 match.setState(Match.STATE_COMPLETED);
             }

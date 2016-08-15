@@ -1,6 +1,7 @@
 package lucasconti.auto;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,7 +12,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ public class RegistrationFrag extends Fragment
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         mTnmtName = getArguments().getString(TAG_TNMT_NAME);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        ((MainActivity) getActivity()).setTitle(mTnmtName + " Registration");
+        ActionBar actionBar = getActivity().getActionBar();
         setupPtcpList(v);
         getPtcps();
         setupFab(v);
