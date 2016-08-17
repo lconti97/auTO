@@ -125,7 +125,18 @@ public class RegistrationFrag extends Fragment
         int id = item.getItemId();
 
         if (id == R.id.action_finish) {
-            Log.i("t", "yeyeye");
+            mManager.finishRegistration(mTnmtUrl, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    MatchQueueFrag frag = new MatchQueueFrag();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(MatchQueueFrag.TAG_TNMT_NAME, mTnmtName);
+                    bundle.putString(MatchQueueFrag.TAG_TNMT_URL, mTnmtUrl);
+                    frag.setArguments(bundle);
+                    getFragmentManager().beginTransaction().replace(R.id.content,
+                            frag).commit();
+                }
+            });
             return true;
         }
 

@@ -185,6 +185,13 @@ public class ChallongeManager {
             }
         }
 
+        public void finishRegistration(String tnmtUrl, Response.Listener<String> listener) {
+            String url = BASE_URL + "/tournaments/" + tnmtUrl + "/start.json?api_key=" + apiKey;
+            StringRequest request = new StringRequest(Request.Method.POST, url,
+                    listener, mErrorListener);
+            queue.add(request);
+        }
+
         public void updateMatch(String tnmtUrl, String matchId, final String scoreString,
                                 final String winnerId, Response.Listener<String> listener) {
             String url = BASE_URL + "/tournaments/" + tnmtUrl + "/matches/" + matchId + ".json?"
