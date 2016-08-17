@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Player 1 Score"
+        android:inputType="number"
+        android:id="@+id/Dialog_submit_match_score_Player_1_score_Edit_text"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Player 2 Score"
+        android:inputType="number"
+        android:id="@+id/Dialog_submit_match_score_Player_2_score_Edit_text"/>
+
+</LinearLayout>

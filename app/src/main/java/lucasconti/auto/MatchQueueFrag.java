@@ -1,12 +1,17 @@
 package lucasconti.auto;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -16,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Lucas on 7/18/2016.
@@ -39,9 +43,16 @@ public class MatchQueueFrag extends Fragment {
         mTnmtName = getArguments().getString(TAG_TNMT_NAME);
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         mManager = ChallongeManager.get(getContext());
-        ((MainActivity) getActivity()).setTitle(mTnmtName + " Match Queue");
         setupMatchQueue(v);
+        setupToolbar(v);
         return v;
+    }
+
+    private void setupToolbar(View v) {
+        setHasOptionsMenu(true);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbar.setTitle(mTnmtName  + " Match Queue");
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
     }
 
     private void setupMatchQueue(View v) {
@@ -52,30 +63,61 @@ public class MatchQueueFrag extends Fragment {
         for (int i = 0; i < mMatchLists.length; i++) {
             mMatchLists[i] = new ArrayList<>();
         }
-        sortMatches();
+        updateMatchesList();
         for (int j = 0; j < 4; j++) {
             mMatchListAdapters[j] = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
                     mMatchLists[j]);
             mMatchListViews[j].setAdapter(mMatchListAdapters[j]);
         }
+        setMatchListListeners();
     }
 
-    private void sortMatches() {
+    private void setMatchListListeners() {
+        mMatchListViews[0].setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Match match = (Match) parent.getItemAtPosition(position);
+                showStartMatchDialog(match);
+            }
+        });
+        mMatchListViews[0].setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Match match = (Match) parent.getItemAtPosition(position);
+                showUpdateScoreDialog(match);
+                return true;
+            }
+        });
+        mMatchListViews[1].setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Match match = (Match) parent.getItemAtPosition(position);
+                showUpdateScoreDialog(match);
+            }
+        });
+    }
+
+    private void updateMatchesList() {
+        for (int i = 0; i < mMatchLists.length; i++) {
+            mMatchLists[i].clear();
+        }
         mManager.getMatches(mTnmtUrl, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject matchJSON = ((JSONObject) response.get(i)).getJSONObject("match");
-                        final String state = matchJSON.getString("state");
+                        String matchId = matchJSON.getString("id");
+                        String state = matchJSON.getString("state");
                         int player1id = matchJSON.optInt("player1_id");
                         int player2id = matchJSON.optInt("player2_id");
-                        if (player1id != 0 && player2id != 0) {
-                            createTwoPlayerMatch(player1id, player2id, state);
-                        }
-                        else if (player1id == 0 && player2id != 0) {
-
-                        }
+                        final Match match = new Match(state, matchId, player1id, player2id);
+                        mManager.getPtcpNames(mTnmtUrl, match, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                addMatchToQueue(match);
+                            }
+                        });
                     }
                     for (ArrayAdapter<Match> matchList : mMatchListAdapters) {
                         matchList.notifyDataSetChanged();
@@ -88,43 +130,8 @@ public class MatchQueueFrag extends Fragment {
         });
     }
 
-    private void createTwoPlayerMatch(int player1id, int player2id, final String state) {
-        final Match match = new Match();
-        mManager.getPtcp(mTnmtUrl, player1id, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String player1name = response.getJSONObject("participant")
-                            .getString("name");
-                    match.setPlayer1Name(player1name);
-                    if (match.getPlayer2Name() != null) {
-                        addMatchToQueue(match, state);
-                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        mManager.getPtcp(mTnmtUrl, player2id, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String player2name = response.getJSONObject("participant")
-                            .getString("name");
-                    match.setPlayer2Name(player2name);
-                    if (match.getPlayer1Name() != null) {
-                        addMatchToQueue(match, state);
-                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void addMatchToQueue(Match match, String state) {
+    private void addMatchToQueue(Match match) {
+        String state = match.getState();
         switch (state)  {
             case "open" :
                 mMatchLists[0].add(match);
@@ -139,5 +146,73 @@ public class MatchQueueFrag extends Fragment {
                 mMatchListAdapters[3].notifyDataSetChanged();
                 break;
         }
+    }
+
+    private void showStartMatchDialog(final Match match)  {
+        new AlertDialog.Builder(getContext()).setTitle(match.toString())
+                .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (match.isReady()) {
+                            startMatch(match);
+                        }
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).show();
+    }
+
+    private void startMatch(Match match) {
+        mMatchLists[0].remove(match);
+        mMatchLists[1].add(match);
+        mMatchListAdapters[0].notifyDataSetChanged();
+        mMatchListAdapters[1].notifyDataSetChanged();
+        match.setState(Match.STATE_IN_PROGRESS);
+    }
+
+    private void endMatch(final Match match, String scoreString) {
+        int player1Score = Integer.parseInt(scoreString.substring(0,1));
+        int player2Score = Integer.parseInt(scoreString.substring(2));
+        int winnerId = player1Score > player2Score ? match.getPlayer1Id() : match.getPlayer2Id();
+        mManager.updateMatch(mTnmtUrl, match.getId(), scoreString, winnerId + "",
+                new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                mMatchLists[0].remove(match);
+                mMatchLists[1].remove(match);
+                mMatchLists[3].add(match);
+                mMatchListAdapters[0].notifyDataSetChanged();
+                mMatchListAdapters[1].notifyDataSetChanged();
+                mMatchListAdapters[3].notifyDataSetChanged();
+                match.setState(Match.STATE_COMPLETED);
+            }
+        });
+    }
+
+    private void showUpdateScoreDialog(final Match match) {
+        View view = getLayoutInflater(null).inflate(R.layout.dialog_update_match_score, null);
+        final EditText player1ScoreEditText = (EditText) view.findViewById(
+                R.id.Dialog_submit_match_score_Player_1_score_Edit_text);
+        final EditText player2ScoreEditText = (EditText) view.findViewById(
+                R.id.Dialog_submit_match_score_Player_2_score_Edit_text);
+        new AlertDialog.Builder(getContext()).setTitle(match.toString())
+                .setView(view)
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String player1Score = player1ScoreEditText.getText().toString();
+                        String player2Score = player2ScoreEditText.getText().toString();
+                        String scoreString = player1Score + "-" + player2Score;
+                        endMatch(match, scoreString);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).show();
     }
 }

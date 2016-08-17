@@ -1,17 +1,28 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_main"
-    tools:context=".RegistrationFrag">
+    android:orientation="vertical">
 
-    <ListView
+    <include layout="@layout/toolbar">
+
+    </include>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/list_view_padding_left"
-        android:id="@+id/ptcps_list"/>
+        tools:showIn="@layout/activity_main"
+        tools:context=".RegistrationFrag">
 
-    <include layout="@layout/fab"
-        android:id="@+id/fab_registration" />
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/list_view_padding_left"
+            android:id="@+id/ptcps_list"/>
 
-</RelativeLayout>
+        <include layout="@layout/fab"
+                 android:id="@+id/fab_registration" />
+
+    </RelativeLayout>
+</LinearLayout>

@@ -150,5 +150,64 @@ public class ChallongeManager {
             queue.add(request);
         }
 
+        public void getPtcpNames(String tnmtUrl, final Match match, final Response.Listener<String> listener) {
+            if (match.getPlayer1Id() != 0 && match.getPlayer2Id() != 0) {
+                getPtcp(tnmtUrl, match.getPlayer1Id(), new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String player1Name = response.getJSONObject("participant")
+                                    .getString("name");
+                            match.setPlayer1Name(player1Name);
+                            if (match.getPlayer2Name() != null) {
+                                listener.onResponse(match.toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                getPtcp(tnmtUrl, match.getPlayer2Id(), new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String player2Name = response.getJSONObject("participant")
+                                    .getString("name");
+                            match.setPlayer2Name(player2Name);
+                            if (match.getPlayer1Name() != null) {
+                                listener.onResponse(match.toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }
+
+        public void finishRegistration(String tnmtUrl, Response.Listener<String> listener) {
+            String url = BASE_URL + "/tournaments/" + tnmtUrl + "/start.json?api_key=" + apiKey;
+            StringRequest request = new StringRequest(Request.Method.POST, url,
+                    listener, mErrorListener);
+            queue.add(request);
+        }
+
+        public void updateMatch(String tnmtUrl, String matchId, final String scoreString,
+                                final String winnerId, Response.Listener<String> listener) {
+            String url = BASE_URL + "/tournaments/" + tnmtUrl + "/matches/" + matchId + ".json?"
+                    + "api_key=" + apiKey;
+            StringRequest request = new StringRequest(Request.Method.PUT,
+                    url, listener, mErrorListener) {
+                @Override
+                public Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("match[scores_csv]", scoreString);
+                    params.put("match[winner_id]", winnerId);
+                    return params;
+                }
+            };
+            queue.add(request);
+        }
+
     }
 
