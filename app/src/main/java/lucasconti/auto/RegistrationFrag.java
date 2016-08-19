@@ -63,7 +63,8 @@ public class RegistrationFrag extends Fragment
         mManager = ChallongeManager.get(getActivity());
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         mTnmtName = getArguments().getString(TAG_TNMT_NAME);
-        mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        mPreferences = getActivity().getSharedPreferences(MainActivity.PHONE_PREF_KEY,
+                Context.MODE_PRIVATE);
         setupToolbar(v);
         setupPtcpList(v);
         getPtcps();
@@ -125,21 +126,31 @@ public class RegistrationFrag extends Fragment
         int id = item.getItemId();
 
         if (id == R.id.action_finish) {
-            mManager.finishRegistration(mTnmtUrl, new Response.Listener<String>() {
+            new AlertDialog.Builder(getContext()).setTitle("Finish Registration?")
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
-                public void onResponse(String response) {
-                    MatchQueueFrag frag = new MatchQueueFrag();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(MatchQueueFrag.TAG_TNMT_NAME, mTnmtName);
-                    bundle.putString(MatchQueueFrag.TAG_TNMT_URL, mTnmtUrl);
-                    frag.setArguments(bundle);
-                    getFragmentManager().beginTransaction().replace(R.id.content,
-                            frag).commit();
+                public void onClick(DialogInterface dialog, int which) {
+
                 }
-            });
+            }).setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mManager.finishRegistration(mTnmtUrl, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            MatchQueueFrag frag = new MatchQueueFrag();
+                            Bundle bundle = new Bundle();
+                            bundle.putString(MatchQueueFrag.TAG_TNMT_NAME, mTnmtName);
+                            bundle.putString(MatchQueueFrag.TAG_TNMT_URL, mTnmtUrl);
+                            frag.setArguments(bundle);
+                            getFragmentManager().beginTransaction().replace(R.id.content, frag)
+                                    .commit();
+                        }
+                    });
+                }
+            }).show();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

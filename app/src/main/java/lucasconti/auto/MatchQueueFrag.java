@@ -1,6 +1,8 @@
 package lucasconti.auto;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -34,6 +36,7 @@ public class MatchQueueFrag extends Fragment {
     private ArrayAdapter<Match>[] mMatchListAdapters = new ArrayAdapter[4];
     private String mTnmtUrl;
     private String mTnmtName;
+    private SharedPreferences mPreferences;
     private ChallongeManager mManager;
 
     @Override
@@ -43,6 +46,8 @@ public class MatchQueueFrag extends Fragment {
         mTnmtName = getArguments().getString(TAG_TNMT_NAME);
         mTnmtUrl = getArguments().getString(TAG_TNMT_URL);
         mManager = ChallongeManager.get(getContext());
+        mPreferences = getActivity().getSharedPreferences(MainActivity.PHONE_PREF_KEY,
+                Context.MODE_PRIVATE);
         setupMatchQueue(v);
         setupToolbar(v);
         return v;
@@ -134,8 +139,16 @@ public class MatchQueueFrag extends Fragment {
         String state = match.getState();
         switch (state)  {
             case "open" :
-                mMatchLists[0].add(match);
-                mMatchListAdapters[0].notifyDataSetChanged();
+                if (mPreferences.getBoolean(match.toString(), false))
+                {
+                    // The match has started
+                    mMatchLists[1].add(match);
+                    mMatchListAdapters[1].notifyDataSetChanged();
+                }
+                else {
+                    mMatchLists[0].add(match);
+                    mMatchListAdapters[0].notifyDataSetChanged();
+                }
                 break;
             case "pending" :
                 mMatchLists[2].add(match);
@@ -170,6 +183,7 @@ public class MatchQueueFrag extends Fragment {
         mMatchLists[1].add(match);
         mMatchListAdapters[0].notifyDataSetChanged();
         mMatchListAdapters[1].notifyDataSetChanged();
+        mPreferences.edit().putBoolean(match.toString(), true).apply();
         match.setState(Match.STATE_IN_PROGRESS);
     }
 

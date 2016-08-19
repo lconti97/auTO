@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+    public static String PHONE_PREF_KEY = "phone";
+    public static String STARTED_PREF_KEY = "started";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
