@@ -1,6 +1,8 @@
 package lucasconti.auto;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -33,11 +35,14 @@ public class TnmtListFrag extends Fragment implements AddTnmtDialogFrag.AddTnmtD
     private FragmentManager mChildFm;
     private ChallongeManager mManager;
     private FloatingActionButton mFab;
+    private SharedPreferences mPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frag_tnmt_list, container, false);
+        mPreferences = getActivity().getSharedPreferences(MainActivity.STARTED_PREF_KEY,
+                Context.MODE_PRIVATE);
         setupTnmtsList(v);
         getTnmts();
         setupFab(v);
