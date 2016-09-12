@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -135,23 +136,40 @@ public class RegistrationFrag extends Fragment
             }).setPositiveButton("Finish", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mManager.finishRegistration(mTnmtUrl, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            MatchQueueFrag frag = new MatchQueueFrag();
-                            Bundle bundle = new Bundle();
-                            bundle.putString(MatchQueueFrag.TAG_TNMT_NAME, mTnmtName);
-                            bundle.putString(MatchQueueFrag.TAG_TNMT_URL, mTnmtUrl);
-                            frag.setArguments(bundle);
-                            getFragmentManager().beginTransaction().replace(R.id.content, frag)
-                                    .commit();
-                        }
-                    });
+                    finishRegistration();
                 }
             }).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void finishRegistration() {
+        mManager.finishRegistration(mTnmtUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //  Gather all ptcp cell phone numbers
+                String[] phoneNumbers = new String[mPtcps.size()];
+                for (int i = 0; i < mPtcps.size(); i++) {
+                    phoneNumbers[i] = mPtcps.get(i).getPhoneNumber();
+                }
+                //  Send a text
+                SmsManager manager = SmsManager.getDefault();
+                String message = getString(R.string.welcome_message_p1) + mTnmtName
+                        + getString(R.string.welcome_message_p2);
+                for (String phoneNumber : phoneNumbers) {
+                    manager.sendTextMessage(phoneNumber, null, message, null, null);
+                }
+
+                MatchQueueFrag frag = new MatchQueueFrag();
+                Bundle bundle = new Bundle();
+                bundle.putString(MatchQueueFrag.TAG_TNMT_NAME, mTnmtName);
+                bundle.putString(MatchQueueFrag.TAG_TNMT_URL, mTnmtUrl);
+                frag.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.content, frag)
+                        .commit();
+            }
+        });
     }
 
     private void deletePtcp(final Ptcp ptcp) {
