@@ -155,8 +155,8 @@ public class RegistrationFrag extends Fragment
                 }
                 //  Send a text
                 SmsManager manager = SmsManager.getDefault();
-                String message = R.string.welcome_message_p1 + mTnmtName
-                        + R.string.welcome_message_p2;
+                String message = getString(R.string.welcome_message_p1) + mTnmtName
+                        + getString(R.string.welcome_message_p2);
                 for (String phoneNumber : phoneNumbers) {
                     manager.sendTextMessage(phoneNumber, null, message, null, null);
                 }

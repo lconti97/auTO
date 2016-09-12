@@ -27,13 +27,7 @@ public class SmsSender {
 
     public void addMessageToSendQueue(String number, String text) {
         Message message = new Message(number, text);
-        //  If this is the only item in queue, send it now
-        if (mMessageQueue.size() == 0) {
-            sendMessage(message);
-        }
-        else {
-            mMessageQueue.add(message);
-        }
+        sendMessage(message);
     }
 
     private void sendMessage(Message message) {

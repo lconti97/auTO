@@ -38,6 +38,7 @@ public class MatchQueueFrag extends Fragment {
     private String mTnmtName;
     private SharedPreferences mPreferences;
     private ChallongeManager mManager;
+    private SmsSender mSmsSender;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +51,7 @@ public class MatchQueueFrag extends Fragment {
                 Context.MODE_PRIVATE);
         setupMatchQueue(v);
         setupToolbar(v);
+        mSmsSender = SmsSender.get();
         return v;
     }
 
@@ -184,6 +186,9 @@ public class MatchQueueFrag extends Fragment {
         mMatchListAdapters[0].notifyDataSetChanged();
         mMatchListAdapters[1].notifyDataSetChanged();
         mPreferences.edit().putBoolean(match.toString(), true).apply();
+        String message = getString(R.string.match_ready_p1) + match.getPlayer2Name() +
+                getString(R.string.match_ready_p2);
+        mSmsSender.addMessageToSendQueue("12026008548", message);
         match.setState(Match.STATE_IN_PROGRESS);
     }
 

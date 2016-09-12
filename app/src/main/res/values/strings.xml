@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">auTO</string>
     <string name="action_settings">Settings</string>
-    <string name="welcome_message_p1">Thank you for registering for </string>
+    <string name="welcome_message_p1">Thank you for registering for\u0020</string>
     <string name="welcome_message_p2">! You will receive a text message when
         your match is ready.</string>
+    <string name="match_ready_p1">Your match against\u0020</string>
+    <string name="match_ready_p2">\u0020is ready. Report your score after the match by texting the score,
+        separated by a hyphen, to this number. Ex. 2-1</string>
 </resources>
