@@ -11,10 +11,10 @@ import android.util.Log;
 /**
  * Created by Lucas on 6/2/2016.
  */
-public class SMSReceiver extends BroadcastReceiver {
+public class SmsReceiver extends BroadcastReceiver {
 
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-    private static final String TAG = "SMSReceiver";
+    private static final String TAG = "SmsReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,10 +30,5 @@ public class SMSReceiver extends BroadcastReceiver {
 //                sendSMS(messages[0].getOriginatingAddress());
             }
         }
-    }
-
-    private void sendSMS(String target) {
-        SmsManager manager = SmsManager.getDefault();
-        manager.sendTextMessage(target, null, "test", null, null);
     }
 }

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">auTO</string>
     <string name="action_settings">Settings</string>
+    <string name="welcome_message_p1">Thank you for registering for </string>
+    <string name="welcome_message_p2">! You will receive a text message when
+        your match is ready.</string>
 </resources>
